@@ -1,0 +1,30 @@
+# Abhängigkeiten (bei npm workspaces auch in Unterordnern möglich)
+node_modules/
+**/node_modules/
+
+# Umgebungsvariablen — WebDAV-/Session-/Passwort-Zugangsdaten gehören nie ins Repo
+.env
+.env.*
+!.env.example
+
+# lokale SQLite-Datenbank (Testdaten, nicht Teil des Codes)
+*.sqlite
+*.sqlite3
+*.db
+
+# Build-Output
+dist/
+dist-ssr/
+
+# Test-Coverage-Reports (Vitest)
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor/OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store

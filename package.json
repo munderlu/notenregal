@@ -1,0 +1,29 @@
+{
+    "name": "notenregal",
+    "version": "1.0.0",
+    "description": "---",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/munderlu/notenregal.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/munderlu/notenregal/issues"
+    },
+    "homepage": "https://github.com/munderlu/notenregal#readme",
+    "private": true,
+    "workspaces": [
+        "backend",
+        "frontend"
+    ],
+    "dependencies": {
+        "better-sqlite3": "^13.0.3"
+    }
+}
