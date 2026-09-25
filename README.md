@@ -34,6 +34,7 @@ Eine mobile App für Tablet und Smartphone soll das Lesen der Noten ermöglichen
 |F09| Halbes-Blättern| eine Funktion soll es ermöglichen, dass man halbe PDF-Seiten blättern kann und dadurch nie den Blick über die Noten verliert| 🟠 Mittel|
 |F10|Bluetooth-Pedal|Man soll mit einem Bluetooth-Pedal blättern können (simuliert Pfeiltasten)| 🟠 Mittel|
 |F11|Android-App|eine Web basierte App soll die Website spiegeln und offline Dateizugriff ermöglichen| 🟠 Mittel|
+|F12|Verändern der Seiten einer PDF-Datei|in der PDF-Datei sollen Seiten verschoben, gelöscht, kopiert und wieder eingefügt werden können|Niedrig|
 
 ---
 
