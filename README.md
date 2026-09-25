@@ -80,7 +80,7 @@ Das Dictionary legt fest, was ich im Projekt unter einem Begriff verstehen.
 |Noten|ein PDF in der sich Musiknoten für einen Song befinden|
 |Song|ein Songs kann auch einem bis mehreren Noten bestehen|
 |Sammlung|eine Sammlung besteht aus mehreren Songs|
-|Freigabe|eine Freigabe kann eine Sammlung, mehrere Songs oder auch nur Noten enthalten|
+|Freigabe|eine Freigabe kann eine Sammlung, eine Setliste, mehrere Songs oder auch nur Noten enthalten|
 |Setliste|eine Setliste besteht aus mehreren Noten, die hintereinander an einem Auftritt angezeigt werden können|
 
 ---
