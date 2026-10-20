@@ -14,7 +14,7 @@ function App() {
                 return response.json();
             })
             .then((data) => {
-                if (!cancelled) setSongs(data);
+                if (!cancelled) setSongs(data.sort((a, b) => a.title.localeCompare(b.title)));
             })
             .catch((err) => {
                 console.error('Error fetching songs:', err);
@@ -43,7 +43,7 @@ function App() {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
             const newSong = await response.json();
-            setSongs((prev) => [...prev, newSong]);
+            setSongs((prev) => [...prev, newSong].sort((a, b) => a.title.localeCompare(b.title)));
             setError(null);
             form.reset();
         } catch (err) {
