@@ -38,3 +38,38 @@ apiRouter.post("/songs", (req, res) => {
         res.status(500).json({ error: "Datenbankfehler" });
     }
 });
+
+apiRouter.put("/songs/:song_id", (req, res) => {
+    try {
+        const { song_id } = req.params;
+        const { title, composer } = req.body ?? {};
+        const db = getDb();
+        const existingSong = db.prepare("SELECT * FROM Songs WHERE song_id = ?").get(song_id);
+        if (!existingSong) {
+            return res.status(404).json({ error: "Song nicht gefunden" });
+        }
+        const updateQuery = db.prepare("UPDATE Songs SET title = ?, composer = ? WHERE song_id = ?");
+        updateQuery.run(title ?? existingSong.title, composer ?? existingSong.composer, song_id);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Datenbankfehler" });
+    }
+});
+
+apiRouter.delete("/songs/:song_id", (req, res) => {
+    try {
+        const { song_id } = req.params;
+        const db = getDb();
+        const existingSong = db.prepare("SELECT * FROM Songs WHERE song_id = ?").get(song_id);
+        if (!existingSong) {
+            return res.status(404).json({ error: "Song nicht gefunden" });
+        }
+        db.prepare("DELETE FROM Songs WHERE song_id = ?").run(song_id);
+        res.status(204).send();
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Datenbankfehler" });
+    }
+});
