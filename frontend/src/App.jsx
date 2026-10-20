@@ -1,122 +1,78 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [songs, setSongs] = useState([]);
+    const [error, setError] = useState(null);
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    useEffect(() => {
+        let cancelled = false;
 
-      <div className="ticks"></div>
+        fetch('/api/songs')
+            .then((response) => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.json();
+            })
+            .then((data) => {
+                if (!cancelled) setSongs(data);
+            })
+            .catch((err) => {
+                console.error('Error fetching songs:', err);
+                if (!cancelled) setError('Songs konnten nicht geladen werden.');
+            });
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    const addSong = async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const title = form.elements.title.value;
+        const composer = form.elements.composer.value;
+
+        try {
+            const response = await fetch('/api/songs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title, composer }),
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            const newSong = await response.json();
+            setSongs((prev) => [...prev, newSong]);
+            setError(null);
+            form.reset();
+        } catch (err) {
+            console.error('Error adding song:', err);
+            setError('Song konnte nicht hinzugefügt werden.');
+        }
+    };
+
+    return (
+        <div className="App">
+            <h1>Song List</h1>
+            {error && <p role="alert">{error}</p>}
+            <ul>
+                {songs.map((song) => (
+                    <li key={song.song_id}>
+                        {song.title}
+                        {song.composer ? <em> – {song.composer}</em> : null}
+                    </li>
+                ))}
+            </ul>
+
+            <h1>Song hinzufügen</h1>
+            <form onSubmit={addSong}>
+                <input type="text" name="title" placeholder="Song Titel" required />
+                <input type="text" name="composer" placeholder="Komponist (optional)" />
+                <button type="submit">Hinzufügen</button>
+            </form>
+        </div>
+    )
 }
 
 export default App

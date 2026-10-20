@@ -22,8 +22,5 @@
     "workspaces": [
         "backend",
         "frontend"
-    ],
-    "dependencies": {
-        "better-sqlite3": "^13.0.3"
-    }
+    ]
 }

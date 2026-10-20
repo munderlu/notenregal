@@ -9,7 +9,7 @@ PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS Songs (
     song_id   INTEGER PRIMARY KEY AUTOINCREMENT,
-    titel     TEXT NOT NULL,
+    title     TEXT NOT NULL,
     composer  TEXT
 );
 
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS Setlisten (
 -- Öffentliche Freigabe über einen Link, optional mit Passwort.
 CREATE TABLE IF NOT EXISTS Freigaben (
     freigabe_id  INTEGER PRIMARY KEY AUTOINCREMENT,
-    titel        TEXT NOT NULL,
+    title        TEXT NOT NULL,
     passwort     TEXT,                  -- nur Hash speichern (z. B. bcrypt), NULL = ohne Passwort
     link         TEXT NOT NULL UNIQUE   -- zufälliges Token für die öffentliche URL
 );
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS Freigabe_Setlist (
 
 CREATE INDEX IF NOT EXISTS idx_noten_song            ON Noten (song_id);
 CREATE INDEX IF NOT EXISTS idx_noten_instrument      ON Noten (instrument);
-CREATE INDEX IF NOT EXISTS idx_songs_titel           ON Songs (titel);
+CREATE INDEX IF NOT EXISTS idx_songs_title           ON Songs (title);
 CREATE INDEX IF NOT EXISTS idx_songs_composer        ON Songs (composer);
 CREATE INDEX IF NOT EXISTS idx_song_sammlung_samml   ON Song_Sammlung (sammlung_id);
 CREATE INDEX IF NOT EXISTS idx_noten_setlist_noten   ON Noten_Setlist (noten_id);
