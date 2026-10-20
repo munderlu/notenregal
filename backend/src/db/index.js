@@ -22,3 +22,16 @@ export function openDatabase(dbPath = process.env.DB_PATH || DEFAULT_DB_PATH) {
 
     return db;
 }
+
+let instance = null;
+
+/**
+ * Gibt die (einzige) geöffnete Datenbank zurück.
+ * @param {string} [dbPath] Nur beim ersten Aufruf relevant.
+ */
+export function getDb(dbPath) {
+    if (instance === null) {
+        instance = openDatabase(dbPath);
+    }
+    return instance;
+}
