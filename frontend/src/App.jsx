@@ -52,6 +52,23 @@ function App() {
         }
     };
 
+    const deleteSong = async (songId) => {
+        try {
+            const confirmed = window.confirm('Möchten Sie diesen Song wirklich löschen?');
+            if (!confirmed) return;
+
+            const response = await fetch(`/api/songs/${songId}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            setSongs((prev) => prev.filter((song) => song.song_id !== songId));
+        }
+        catch (err) {
+            console.error('Error deleting song:', err);
+            setError('Song konnte nicht gelöscht werden.');
+        }
+    };
+
     return (
         <div className="App">
             <h1>Song List</h1>
@@ -61,6 +78,8 @@ function App() {
                     <li key={song.song_id}>
                         {song.title}
                         {song.composer ? <em> – {song.composer}</em> : null}
+                        <br></br><button onClick={() => deleteSong(song.song_id)}>Löschen</button>
+                        <br></br><button onClick={() => window.location.href = `/edit/${song.song_id}`}>Bearbeiten</button>
                     </li>
                 ))}
             </ul>
