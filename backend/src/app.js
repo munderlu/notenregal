@@ -1,7 +1,7 @@
 // backend/src/app.js
 import cors from "cors";
 import express from "express";
-import { apiRouter } from "./routes/api_routes.js";
+import { songsRouter } from "./routes/song_routes.js";
 
 export const app = express();
 
@@ -12,4 +12,4 @@ app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
 });
 
-app.use("/api", apiRouter);
+app.use("/api/songs", songsRouter);

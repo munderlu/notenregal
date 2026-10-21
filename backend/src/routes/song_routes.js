@@ -2,12 +2,12 @@
 import { Router } from "express";
 import { getDb } from "../db/index.js";
 
-export const apiRouter = Router();
+export const songsRouter = Router();
 
 // Songs
 
 // Alle Songs
-apiRouter.get("/songs", (req, res) => {
+songsRouter.get("/", (req, res) => {
     try {
         const db = getDb();
         const rows = db.prepare("SELECT * FROM Songs ORDER BY title").all();
@@ -19,7 +19,7 @@ apiRouter.get("/songs", (req, res) => {
     }
 });
 
-apiRouter.post("/songs", (req, res) => {
+songsRouter.post("/", (req, res) => {
     try {
         const { title, composer } = req.body ?? {};
         if (typeof title !== "string" || title.trim() === "") {
@@ -39,7 +39,7 @@ apiRouter.post("/songs", (req, res) => {
     }
 });
 
-apiRouter.put("/songs/:song_id", (req, res) => {
+songsRouter.put("/:song_id", (req, res) => {
     try {
         const { song_id } = req.params;
         const { title, composer } = req.body ?? {};
@@ -60,7 +60,7 @@ apiRouter.put("/songs/:song_id", (req, res) => {
     }
 });
 
-apiRouter.delete("/songs/:song_id", (req, res) => {
+songsRouter.delete("/:song_id", (req, res) => {
     try {
         const { song_id } = req.params;
         const db = getDb();
