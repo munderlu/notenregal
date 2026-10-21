@@ -15,8 +15,8 @@ export default function SongList() {
                     <li key={song.song_id}>
                         {song.title}
                         {song.composer ? <em> – {song.composer}</em> : null}
-                        <br></br><button onClick={() => deleteSong(song.song_id, setSongs, setError)}>Löschen</button>
-                        <br></br><UpdateDialogue songId={song.song_id} />
+                        <br /><button onClick={() => deleteSong(song.song_id, setSongs, setError)}>Löschen</button>
+                        <br /><UpdateDialogue song={song} />
                     </li>
                 ))}
             </ul>

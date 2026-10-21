@@ -1,21 +1,12 @@
 import { useState, useEffect, useContext, useRef } from 'react';
 import { AppContext } from './AppContext';
 
-export default function UpdateDialogue({ songId }) {
-    const { songs, setSongs, setError } = useContext(AppContext);
+export default function UpdateDialogue({ song }) {
+    const { setSongs, setError } = useContext(AppContext);
 
     const [isOpen, setIsOpen] = useState(false);
-    const [title, setTitle] = useState('');
-    const [composer, setComposer] = useState('');
-    const oldSong = songs.find(song => song.song_id === songId);
-
-    const oldTitle = oldSong ? oldSong.title : '';
-    const oldComposer = oldSong ? oldSong.composer : '';
-
-    useEffect(() => {
-        setTitle(oldTitle);
-        setComposer(oldComposer);
-    }, [oldTitle, oldComposer]);
+    const [title, setTitle] = useState(song.title);
+    const [composer, setComposer] = useState(song.composer ?? '');
 
     const dialogRef = useRef(null);
 
@@ -33,7 +24,7 @@ export default function UpdateDialogue({ songId }) {
     const updateSong = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`/api/songs/${songId}`, {
+            const response = await fetch(`/api/songs/${song.song_id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -47,7 +38,7 @@ export default function UpdateDialogue({ songId }) {
 
             const updatedSong = await response.json();
 
-            setSongs((prevSongs) => prevSongs.map((song) => (song.song_id === songId ? updatedSong : song)));
+            setSongs((prevSongs) => prevSongs.map((songx) => (songx.song_id === song.song_id ? updatedSong : songx)));
 
             setIsOpen(false);
 
