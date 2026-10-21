@@ -50,6 +50,9 @@ apiRouter.put("/songs/:song_id", (req, res) => {
         }
         const updateQuery = db.prepare("UPDATE Songs SET title = ?, composer = ? WHERE song_id = ?");
         updateQuery.run(title ?? existingSong.title, composer ?? existingSong.composer, song_id);
+
+        const updatedSong = db.prepare("SELECT * FROM Songs WHERE song_id = ?").get(song_id);
+        res.status(200).json(updatedSong);
     }
     catch (err) {
         console.error(err);

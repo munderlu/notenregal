@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { AppContext } from './AppContext';
 import { deleteSong } from '../helper/songsHelper';
+import UpdateDialogue from './UpdateDialogue';
 
 export default function SongList() {
     const { songs, setSongs, error, setError } = useContext(AppContext);
@@ -15,7 +16,7 @@ export default function SongList() {
                         {song.title}
                         {song.composer ? <em> – {song.composer}</em> : null}
                         <br></br><button onClick={() => deleteSong(song.song_id, setSongs, setError)}>Löschen</button>
-                        <br></br><button onClick={() => window.location.href = `/edit/${song.song_id}`}>Bearbeiten</button>
+                        <br></br><UpdateDialogue songId={song.song_id} />
                     </li>
                 ))}
             </ul>
