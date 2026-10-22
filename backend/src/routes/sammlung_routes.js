@@ -9,7 +9,7 @@ export const sammlungsRouter = Router();
 sammlungsRouter.get("/", (req, res) => {
     try {
         const db = getDb();
-        const rows = db.prepare("SELECT * FROM Sammlungen ORDER BY title").all();
+        const rows = db.prepare("SELECT * FROM Sammlungen ORDER BY name").all();
 
         res.json(rows);
     } catch (err) {
@@ -20,7 +20,7 @@ sammlungsRouter.get("/", (req, res) => {
 
 sammlungsRouter.post("/", (req, res) => {
     try {
-        const { title: name } = req.body ?? {};
+        const { name: name } = req.body ?? {};
         if (typeof name !== "string" || name.trim() === "") {
             return res.status(400).json({ error: "Titel ist erforderlich" });
         }
@@ -40,8 +40,8 @@ sammlungsRouter.post("/", (req, res) => {
 
 sammlungsRouter.put("/:sammlung_id", (req, res) => {
     try {
-        const { song_id: sammlung_id } = req.params;
-        const { title: name } = req.body ?? {};
+        const { sammlung_id: sammlung_id } = req.params;
+        const { name: name } = req.body ?? {};
         const db = getDb();
         const existingSammlung = db.prepare("SELECT * FROM Sammlungen WHERE sammlung_id = ?").get(sammlung_id);
         if (!existingSammlung) {
@@ -61,7 +61,7 @@ sammlungsRouter.put("/:sammlung_id", (req, res) => {
 
 sammlungsRouter.delete("/:sammlung_id", (req, res) => {
     try {
-        const { song_id: sammlung_id } = req.params;
+        const { sammlung_id: sammlung_id } = req.params;
         const db = getDb();
         const existingSammlung = db.prepare("SELECT * FROM Sammlungen WHERE sammlung_id = ?").get(sammlung_id);
         if (!existingSammlung) {

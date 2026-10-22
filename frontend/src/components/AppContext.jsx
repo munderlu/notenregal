@@ -1,10 +1,11 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
 
 export const AppContext = createContext();
 
 export function AppProvider({ children }) {
     const [songs, setSongs] = useState([]);
     const [error, setError] = useState(null);
+    const [sammlungen, setSammlungen] = useState([]);
 
 
     useEffect(() => {
@@ -28,7 +29,7 @@ export function AppProvider({ children }) {
         };
     }, []);
 
-    const value = { songs, setSongs, error, setError };
+    const value = { songs, setSongs, sammlungen, setSammlungen, error, setError };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
