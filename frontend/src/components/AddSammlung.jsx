@@ -21,7 +21,8 @@ function addSammlung(e, setSammlungen, setError) {
         }
         )
         .then((newSammlung) => {
-            setSammlungen((prevSammlungen) => [...prevSammlungen, newSammlung]);
+            setSammlungen((prevSammlungen) => [...prevSammlungen, newSammlung].sort((a, b) => a.name.localeCompare(b.name)));
+            setError(null);
             e.target.reset();
         })
         .catch((error) => {

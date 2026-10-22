@@ -29,6 +29,27 @@ export function AppProvider({ children }) {
         };
     }, []);
 
+    useEffect(() => {
+        let cancelled = false;
+
+        fetch('/api/sammlungen')
+            .then((response) => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.json();
+            })
+            .then((data) => {
+                if (!cancelled) setSammlungen(data.sort((a, b) => a.name.localeCompare(b.name)));
+            })
+            .catch((err) => {
+                console.error('Error fetching sammlungen:', err);
+                if (!cancelled) setError('Sammlungen konnten nicht geladen werden.');
+            });
+
+        return () => {
+            cancelled = true;
+        }
+    }, []);
+
     const value = { songs, setSongs, sammlungen, setSammlungen, error, setError };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -1,7 +1,11 @@
+import AddSammlung from "./AddSammlung";
+import SammlungenList from "./SammlungenList";
+
 export default function Sammlungen() {
     return (
         <div className="Sammlungen">
-            <h1>Sammlungen</h1>
+            <AddSammlung />
+            <SammlungenList />
         </div>
     )
 }
