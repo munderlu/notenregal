@@ -2,6 +2,7 @@
 import cors from "cors";
 import express from "express";
 import { songsRouter } from "./routes/song_routes.js";
+import { sammlungsRouter } from "./routes/sammlung_routes.js";
 
 export const app = express();
 
@@ -13,3 +14,4 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/songs", songsRouter);
+app.use("/api/sammlungen", sammlungsRouter);
