@@ -1,12 +1,10 @@
-// backend/src/routes/api_routes.js
 import { Router } from "express";
 import { getDb } from "../db/index.js";
 
 export const songsRouter = Router();
 
-// Songs
+// ---------------------------------- Songs ---------------------------------------------
 
-// Alle Songs
 songsRouter.get("/", (req, res) => {
     try {
         const db = getDb();
@@ -76,3 +74,23 @@ songsRouter.delete("/:song_id", (req, res) => {
         res.status(500).json({ error: "Datenbankfehler" });
     }
 });
+
+songsRouter.get("/:song_id", (req, res) => {
+    try {
+        const { song_id } = req.params;
+        const db = getDb();
+        const loadedSong = db.prepare("SELECT * FROM Songs WHERE song_id = ?").get(song_id);
+
+        if (!loadedSong) {
+            return res.status(404).json({ error: "Song nicht gefunden" });
+        }
+        res.status(200).json(loadedSong);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Datenbankfehler" });
+    }
+});
+
+// ----------------------------------- Songs - Sammlungen ------------------------------------------
+
+

@@ -32,6 +32,21 @@ export async function getAllSammlungen() {
 
 // ---------------------------- Songs -------------------------------------------
 
+export async function getSongDetails(song_id) {
+    try {
+        const response = await fetch(`/api/songs/${song_id}`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`)
+        }
+
+        return await response.json();
+    } catch (err) {
+        console.error('Error fetching song details');
+        throw err;
+    }
+}
+
 export async function addSong(values) {
     try {
         const response = await fetch('/api/songs', {

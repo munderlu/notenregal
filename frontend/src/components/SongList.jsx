@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { AppContext } from './AppContext';
 import UpdateDialogue from './UpdateDialogue';
 import { updateSong, deleteSong } from '../helper/api';
+import { Link } from 'react-router-dom';
 
 const songFields = [
     { name: 'title', label: 'Titel', type: 'text', required: true },
@@ -69,10 +70,12 @@ export default function SongList() {
             <ul className="item-list">
                 {filteredSongs.map((song) => (
                     <li key={song.song_id} className="item">
-                        <div className="item__info">
-                            <span className="item__title">{song.title}</span>
-                            {song.composer ? <span className="item__subtitle">{song.composer}</span> : null}
-                        </div>
+                        <Link to={`/songs/${song.song_id}`}>
+                            <div className="item__info">
+                                <span className="item__title">{song.title}</span>
+                                {song.composer ? <span className="item__subtitle">{song.composer}</span> : null}
+                            </div>
+                        </Link>
                         <div className="item__actions">
                             <UpdateDialogue fields={songFields} initialValues={song} onSave={(values) => handleUpdateSong(song.song_id, values)} />
                             <button className="btn btn--danger" onClick={() => handleDeleteSong(song.song_id)}>Löschen</button>
