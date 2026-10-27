@@ -22,13 +22,13 @@ export default function AddSammlung() {
         }
     }
     return (
-        <div className="AddSammlung">
-            <h1>Sammlung hinzufügen</h1>
-            <form onSubmit={handleAddSammlung}>
+        <section className="AddSammlung card">
+            <h2 className="card__title">Sammlung hinzufügen</h2>
+            <form className="add-form" onSubmit={handleAddSammlung}>
                 <input type="text" name="name" placeholder="Name der Sammlung" required />
-                <button type="submit">Hinzufügen</button>
+                <button type="submit" className="btn btn--primary">Hinzufügen</button>
             </form>
 
-        </div>
+        </section>
     );
 };

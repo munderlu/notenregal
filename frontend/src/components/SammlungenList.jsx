@@ -48,30 +48,36 @@ export default function SammlungenList() {
 
 
     return (
-        <div className="SammlungenList">
-            <h1>Sammlungen List</h1>
-            {error && <p role="alert">{error}</p>}
-            <div className='suche'>
+        <section className="SammlungenList">
+            <h2 className="section-title">Alle Sammlungen</h2>
+            {error && <p className="alert" role="alert">{error}</p>}
+            <div className="search">
                 <input
                     type="text"
                     placeholder="Suche nach Sammlungen"
                     onChange={(e) => {
                         setSearchTerm(e.target.value);
                     }}
-                    className="search-input"
+                    className="search__input"
                     value={searchTerm}
                 />
-                <button onClick={() => setSearchTerm("")}>Löschen</button>
+                {searchTerm && (
+                    <button className="search__clear" onClick={() => setSearchTerm("")} aria-label="Suche löschen">×</button>
+                )}
             </div>
-            <ul>
+            <ul className="item-list">
                 {filteredSammlungen.map((sammlung) => (
-                    <li key={sammlung.sammlung_id}>
-                        {sammlung.name}
-                        <br /><button onClick={() => handleDeleteSammlung(sammlung.sammlung_id)}>Löschen</button>
-                        <br /><UpdateDialogue fields={sammlungFields} initialValues={sammlung} onSave={(values) => handleUpdateSammlung(sammlung.sammlung_id, values)} />
+                    <li key={sammlung.sammlung_id} className="item">
+                        <div className="item__info">
+                            <span className="item__title">{sammlung.name}</span>
+                        </div>
+                        <div className="item__actions">
+                            <UpdateDialogue fields={sammlungFields} initialValues={sammlung} onSave={(values) => handleUpdateSammlung(sammlung.sammlung_id, values)} />
+                            <button className="btn btn--danger" onClick={() => handleDeleteSammlung(sammlung.sammlung_id)}>Löschen</button>
+                        </div>
                     </li>
                 ))}
             </ul>
-        </div>
+        </section>
     );
 };

@@ -32,16 +32,16 @@ export default function UpdateDialogue({ fields, initialValues, onSave }) {
 
     return (
         <div className="UpdateDialogue">
-            <button onClick={() => setIsOpen(true)}>Bearbeiten</button>
-            <dialog ref={dialogRef} onClose={() => setIsOpen(false)}>
-                <h2>Bearbeiten</h2>
-                <form onSubmit={handleSubmit}>
+            <button className="btn btn--secondary" onClick={() => setIsOpen(true)}>Bearbeiten</button>
+            <dialog ref={dialogRef} className="dialog" onClose={() => setIsOpen(false)}>
+                <h2 className="dialog__title">Bearbeiten</h2>
+                <form className="dialog__form" onSubmit={handleSubmit}>
                     {fields.map((field) => (
-                        <div key={field.name}>
-                            <label htmlFor={id}>{field.label}</label>
+                        <div key={field.name} className="form-field">
+                            <label htmlFor={`${id}-${field.name}`}>{field.label}</label>
                             <input
                                 type={field.type}
-                                id={id}
+                                id={`${id}-${field.name}`}
                                 required={field.required}
                                 name={field.name}
                                 value={values[field.name] || ''}
@@ -49,8 +49,10 @@ export default function UpdateDialogue({ fields, initialValues, onSave }) {
                             />
                         </div>
                     ))}
-                    <button type="submit">Aktualisieren</button>
-                    <button type="button" onClick={() => setIsOpen(false)}>Abbrechen</button>
+                    <div className="dialog__actions">
+                        <button type="button" className="btn btn--secondary" onClick={() => setIsOpen(false)}>Abbrechen</button>
+                        <button type="submit" className="btn btn--primary">Aktualisieren</button>
+                    </div>
                 </form>
             </dialog>
         </div>

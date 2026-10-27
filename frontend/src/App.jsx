@@ -1,5 +1,6 @@
 import './App.css'
 import Header from './components/Header'
+import Start from './components/Start'
 import Songs from './components/Songs'
 import Sammlungen from './components/Sammlungen'
 import { AppProvider } from './components/AppContext'
@@ -10,10 +11,13 @@ function App() {
         <AppProvider>
             <BrowserRouter>
                 <Header />
-                <Routes>
-                    <Route path="/" element={<Songs />} />
-                    <Route path="/sammlungen" element={<Sammlungen />} />
-                </Routes>
+                <main className="page">
+                    <Routes>
+                        <Route path="/" element={<Start />} />
+                        <Route path="/songs" element={<Songs />} />
+                        <Route path="/sammlungen" element={<Sammlungen />} />
+                    </Routes>
+                </main>
             </BrowserRouter>
         </AppProvider>
     )

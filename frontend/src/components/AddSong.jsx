@@ -22,14 +22,14 @@ export default function AddSong() {
         }
     }
     return (
-        <div className="AddSong">
-            <h1>Song hinzufügen</h1>
-            <form onSubmit={handleAddSong}>
+        <section className="AddSong card">
+            <h2 className="card__title">Song hinzufügen</h2>
+            <form className="add-form" onSubmit={handleAddSong}>
                 <input type="text" name="title" placeholder="Song Titel" required />
                 <input type="text" name="composer" placeholder="Komponist (optional)" />
-                <button type="submit">Hinzufügen</button>
+                <button type="submit" className="btn btn--primary">Hinzufügen</button>
             </form>
 
-        </div>
+        </section>
     );
 };

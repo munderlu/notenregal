@@ -49,31 +49,37 @@ export default function SongList() {
     }
 
     return (
-        <div className="SongList">
-            <h1>Song List</h1>
-            {error && <p role="alert">{error}</p>}
-            <div className='suche'>
+        <section className="SongList">
+            <h2 className="section-title">Alle Songs</h2>
+            {error && <p className="alert" role="alert">{error}</p>}
+            <div className="search">
                 <input
                     type="text"
                     placeholder="Suche nach Songtitel oder Komponist"
                     onChange={(e) => {
                         setSearchTerm(e.target.value);
                     }}
-                    className="search-input"
+                    className="search__input"
                     value={searchTerm}
                 />
-                <button onClick={() => setSearchTerm("")}>Löschen</button>
+                {searchTerm && (
+                    <button className="search__clear" onClick={() => setSearchTerm("")} aria-label="Suche löschen">×</button>
+                )}
             </div>
-            <ul>
+            <ul className="item-list">
                 {filteredSongs.map((song) => (
-                    <li key={song.song_id}>
-                        {song.title}
-                        {song.composer ? <em> – {song.composer}</em> : null}
-                        <br /><button onClick={() => handleDeleteSong(song.song_id)}>Löschen</button>
-                        <br /><UpdateDialogue fields={songFields} initialValues={song} onSave={(values) => handleUpdateSong(song.song_id, values)} />
+                    <li key={song.song_id} className="item">
+                        <div className="item__info">
+                            <span className="item__title">{song.title}</span>
+                            {song.composer ? <span className="item__subtitle">{song.composer}</span> : null}
+                        </div>
+                        <div className="item__actions">
+                            <UpdateDialogue fields={songFields} initialValues={song} onSave={(values) => handleUpdateSong(song.song_id, values)} />
+                            <button className="btn btn--danger" onClick={() => handleDeleteSong(song.song_id)}>Löschen</button>
+                        </div>
                     </li>
                 ))}
             </ul>
-        </div>
+        </section>
     );
 };
