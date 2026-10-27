@@ -22,11 +22,15 @@ export default function SongDetails() {
     }, []);
 
     return (
-        <>
-            <Link to="/songs">Alle Songs</Link>
-            <h1>{song.title}</h1>
-            {song.composer && <p> {song.composer}</p>}
+        <article className="detail">
+            <Link to="/songs" className="back-link">← Alle Songs</Link>
             {error && <p className="alert" role="alert">{error}</p>}
-        </>
+            {song.title && (
+                <header className="detail__header">
+                    <h1 className="page-title">{song.title}</h1>
+                    {song.composer && <p className="detail__subtitle">{song.composer}</p>}
+                </header>
+            )}
+        </article>
     );
 }

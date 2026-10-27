@@ -216,6 +216,21 @@
     min-width: 0;
 }
 
+/* Verlinkter Eintrag: ganze Zeilenbreite klickbar */
+.item__link {
+    flex: 1;
+    min-width: 0;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+}
+
+.item__link:hover .item__title {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 .item__title {
     font-weight: 600;
     overflow-wrap: anywhere;
@@ -270,6 +285,47 @@
     justify-content: flex-end;
     gap: var(--space-2);
     margin-top: var(--space-2);
+}
+
+/* ===== Detailansicht ===== */
+.detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.back-link {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: color 0.15s;
+}
+
+.back-link:hover {
+    color: var(--color-primary);
+}
+
+.detail__header {
+    padding-bottom: var(--space-4);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.detail__header .page-title {
+    overflow-wrap: anywhere;
+}
+
+.detail__subtitle {
+    margin-top: var(--space-1);
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+}
+
+.detail .alert {
+    margin-bottom: 0;
 }
 
 /* ===== Startseite ===== */
@@ -402,6 +458,14 @@
 
     .dialog {
         padding: var(--space-4);
+    }
+
+    .back-link {
+        min-height: 2.75rem;
+    }
+
+    .detail__subtitle {
+        font-size: 1rem;
     }
 
     .dialog__actions .btn {

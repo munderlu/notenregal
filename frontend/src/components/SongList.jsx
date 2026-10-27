@@ -70,7 +70,7 @@ export default function SongList() {
             <ul className="item-list">
                 {filteredSongs.map((song) => (
                     <li key={song.song_id} className="item">
-                        <Link to={`/songs/${song.song_id}`}>
+                        <Link to={`/songs/${song.song_id}`} className="item__link">
                             <div className="item__info">
                                 <span className="item__title">{song.title}</span>
                                 {song.composer ? <span className="item__subtitle">{song.composer}</span> : null}
