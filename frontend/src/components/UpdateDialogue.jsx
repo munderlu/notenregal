@@ -1,16 +1,18 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useId } from 'react';
 
 export default function UpdateDialogue({ fields, initialValues, onSave }) {
     const [isOpen, setIsOpen] = useState(false);
     const [values, setValues] = useState(initialValues);
 
     const dialogRef = useRef(null);
+    const id = useId();
 
     useEffect(() => {
         const dialog = dialogRef.current;
         if (!dialog) return;
 
         if (isOpen) {
+            setValues(initialValues);
             dialog.showModal();
         } else {
             dialog.close();
@@ -36,10 +38,10 @@ export default function UpdateDialogue({ fields, initialValues, onSave }) {
                 <form onSubmit={handleSubmit}>
                     {fields.map((field) => (
                         <div key={field.name}>
-                            <label htmlFor={field.name}>{field.label}</label>
+                            <label htmlFor={id}>{field.label}</label>
                             <input
                                 type={field.type}
-                                id={field.name}
+                                id={id}
                                 required={field.required}
                                 name={field.name}
                                 value={values[field.name] || ''}

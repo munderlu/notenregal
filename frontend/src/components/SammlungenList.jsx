@@ -1,81 +1,74 @@
 import { useContext, useState } from 'react';
 import { AppContext } from './AppContext';
 import UpdateDialogue from './UpdateDialogue';
+import { updateSammlung, deleteSammlung } from '../helper/api';
 
-const deleteSammlung = async (sammlungId, setSongs, setError) => {
-    try {
-        const confirmed = window.confirm('Möchten Sie diese Sammlung wirklich löschen?');
-        if (!confirmed) return;
+const sammlungFields = [
+    { name: 'name', label: 'Name', type: 'text', required: true },
+];
 
-        const response = await fetch(`/api/sammlungen/${sammlungId}`, {
-            method: 'DELETE',
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        setSongs((prev) => prev.filter((sammlung) => sammlung.sammlung_id !== sammlungId));
-    }
-    catch (err) {
-        console.error('Error deleting sammlung:', err);
-        setError('Sammlung konnte nicht gelöscht werden.');
-    }
-}
-
-const updateSammlung = async (sammlung_id, values, setSammlungen, setError) => {
-    try {
-        const response = await fetch(`/api/sammlungen/${sammlung_id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(values),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-
-        const updatedSammlung = await response.json();
-
-        setSammlungen((prev) => prev.map((sammlung) => (sammlung.sammlung_id === updatedSammlung.sammlung_id ? updatedSammlung : sammlung)).sort((a, b) => a.name.localeCompare(b.name)));
-
-        setError(null);
-    }
-    catch (err) {
-        console.error('Error updating song:', err);
-        setError('Sammlung konnte nicht aktualisiert werden.');
-    }
-}
-
-export default function SongList() {
+export default function SammlungenList() {
     const { sammlungen, setSammlungen, error, setError } = useContext(AppContext);
     const [searchTerm, setSearchTerm] = useState('');
 
     const filteredSammlungen = sammlungen.filter((sammlung) => {
         const titleMatch = sammlung.name.toLowerCase().includes(searchTerm.toLowerCase());
         return titleMatch;
-    });
+    }).sort(
+        (a, b) => a.name.localeCompare(b.name, 'de')
+    );
 
-    const sammlungFields = [
-        { name: 'name', label: 'Name', type: 'text', required: true },
-    ];
+    const handleUpdateSammlung = async (sammlung_id, values) => {
+        try {
+            const updatedSammlung = await updateSammlung(sammlung_id, values);
+
+            setSammlungen(prev => prev.map(
+                sammlung => sammlung.sammlung_id === sammlung_id ? updatedSammlung : sammlung
+            ));
+
+            setError(null);
+        } catch (err) {
+            setError('Error updating Sammlung');
+        }
+    }
+
+    const handleDeleteSammlung = async (sammlung_id) => {
+        try {
+            const answer = await deleteSammlung(sammlung_id);
+
+            if (answer) {
+                setSammlungen(prev => prev.filter(
+                    sammlung => sammlung.sammlung_id !== sammlung_id
+                ));
+            }
+        } catch (err) {
+            setError('Error deleting Sammlung')
+        }
+    }
+
 
     return (
         <div className="SammlungenList">
             <h1>Sammlungen List</h1>
             {error && <p role="alert">{error}</p>}
-            <input
-                type="text"
-                placeholder="Suche nach Sammlungen"
-                onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                }}
-                className="search-input"
-            />
+            <div className='suche'>
+                <input
+                    type="text"
+                    placeholder="Suche nach Sammlungen"
+                    onChange={(e) => {
+                        setSearchTerm(e.target.value);
+                    }}
+                    className="search-input"
+                    value={searchTerm}
+                />
+                <button onClick={() => setSearchTerm("")}>Löschen</button>
+            </div>
             <ul>
                 {filteredSammlungen.map((sammlung) => (
                     <li key={sammlung.sammlung_id}>
                         {sammlung.name}
-                        <br /><button onClick={() => deleteSammlung(sammlung.sammlung_id, setSammlungen, setError)}>Löschen</button>
-                        <br /><UpdateDialogue fields={sammlungFields} initialValues={sammlung} onSave={(values) => updateSammlung(sammlung.sammlung_id, values, setSammlungen, setError)} />
+                        <br /><button onClick={() => handleDeleteSammlung(sammlung.sammlung_id)}>Löschen</button>
+                        <br /><UpdateDialogue fields={sammlungFields} initialValues={sammlung} onSave={(values) => handleUpdateSammlung(sammlung.sammlung_id, values)} />
                     </li>
                 ))}
             </ul>

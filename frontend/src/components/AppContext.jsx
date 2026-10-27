@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
+import { getAllSammlungen, getAllSongs } from '../helper/api';
 
 export const AppContext = createContext();
 
@@ -9,45 +10,21 @@ export function AppProvider({ children }) {
 
 
     useEffect(() => {
-        let cancelled = false;
+        const loadData = async () => {
+            try {
+                const [songsResponse, sammlungenResponse] = await Promise.all([
+                    getAllSongs(),
+                    getAllSammlungen()
+                ]);
 
-        fetch('/api/songs')
-            .then((response) => {
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                return response.json();
-            })
-            .then((data) => {
-                if (!cancelled) setSongs(data.sort((a, b) => a.title.localeCompare(b.title)));
-            })
-            .catch((err) => {
-                console.error('Error fetching songs:', err);
-                if (!cancelled) setError('Songs konnten nicht geladen werden.');
-            });
-
-        return () => {
-            cancelled = true;
+                setSongs(songsResponse);
+                setSammlungen(sammlungenResponse);
+            } catch (err) {
+                setError('Daten konnten nicht geladen werden.');
+            }
         };
-    }, []);
 
-    useEffect(() => {
-        let cancelled = false;
-
-        fetch('/api/sammlungen')
-            .then((response) => {
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                return response.json();
-            })
-            .then((data) => {
-                if (!cancelled) setSammlungen(data.sort((a, b) => a.name.localeCompare(b.name)));
-            })
-            .catch((err) => {
-                console.error('Error fetching sammlungen:', err);
-                if (!cancelled) setError('Sammlungen konnten nicht geladen werden.');
-            });
-
-        return () => {
-            cancelled = true;
-        }
+        loadData();
     }, []);
 
     const value = { songs, setSongs, sammlungen, setSammlungen, error, setError };
