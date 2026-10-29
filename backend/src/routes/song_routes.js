@@ -84,13 +84,22 @@ songsRouter.get("/:song_id", (req, res) => {
         if (!loadedSong) {
             return res.status(404).json({ error: "Song nicht gefunden" });
         }
-        res.status(200).json(loadedSong);
+
+        const sammlungen = db.prepare(`
+            SELECT sa.sammlung_id, sa.name
+            FROM Song_Sammlung ss
+            JOIN Sammlungen sa ON ss.sammlung_id = sa.sammlung_id
+            WHERE ss.song_id = ?
+            ORDER BY sa.name;
+        `).all(song_id);
+
+        res.status(200).json({
+            ...loadedSong,
+            sammlungen
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Datenbankfehler" });
     }
 });
-
-// ----------------------------------- Songs - Sammlungen ------------------------------------------
-
 
