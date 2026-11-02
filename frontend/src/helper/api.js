@@ -72,7 +72,7 @@ export async function deleteSong(song_id) {
         const confirmed = window.confirm('Möchten Sie diesen Song wirklich löschen?');
         if (!confirmed) return 0;
 
-        const response = await fetch(`api/songs/${song_id}`, {
+        const response = await fetch(`/api/songs/${song_id}`, {
             method: 'DELETE',
         });
         if (!response.ok) {
@@ -87,7 +87,7 @@ export async function deleteSong(song_id) {
 }
 export async function updateSong(song_id, values) {
     try {
-        const response = await fetch(`api/songs/${song_id}`, {
+        const response = await fetch(`/api/songs/${song_id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -106,6 +106,21 @@ export async function updateSong(song_id, values) {
 }
 
 // ---------------------------- Sammlungen -------------------------------------------
+
+export async function getSammlungDetails(sammlung_id) {
+    try {
+        const response = await fetch(`/api/sammlungen/${sammlung_id}`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`)
+        }
+
+        return await response.json();
+    } catch (err) {
+        console.error('Error fetching sammlung details');
+        throw err;
+    }
+}
 
 export async function addSammlung(values) {
     try {
@@ -132,7 +147,7 @@ export async function deleteSammlung(sammlung_id) {
         const confirmed = window.confirm('Möchten Sie diese Sammlung wirklich löschen?');
         if (!confirmed) return 0;
 
-        const response = await fetch(`api/sammlungen/${sammlung_id}`, {
+        const response = await fetch(`/api/sammlungen/${sammlung_id}`, {
             method: 'DELETE',
         });
         if (!response.ok) {
@@ -147,7 +162,7 @@ export async function deleteSammlung(sammlung_id) {
 }
 export async function updateSammlung(sammlung_id, values) {
     try {
-        const response = await fetch(`api/sammlungen/${sammlung_id}`, {
+        const response = await fetch(`/api/sammlungen/${sammlung_id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -161,6 +176,36 @@ export async function updateSammlung(sammlung_id, values) {
         return await response.json();
     } catch (err) {
         console.error("Error updating sammlung: ", err);
+        throw err;
+    }
+}
+
+// --------------------------- Song - Sammlung ------------------------------------------
+
+export async function addSongToSammlung(song_id, sammlung_id) {
+    try {
+        const response = await fetch(`/api/sammlungen/${sammlung_id}/songs/${song_id}`, {
+            method: 'PUT',
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+    } catch (err) {
+        console.error("Error adding song to sammlung: ", err);
+        throw err;
+    }
+}
+
+export async function deleteSongFromSammlung(song_id, sammlung_id) {
+    try {
+        const response = await fetch(`/api/sammlungen/${sammlung_id}/songs/${song_id}`, {
+            method: 'DELETE',
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+    } catch (err) {
+        console.error("Error removing song from sammlung: ", err);
         throw err;
     }
 }

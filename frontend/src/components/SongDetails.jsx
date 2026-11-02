@@ -10,16 +10,16 @@ export default function SongDetails() {
     useEffect(() => {
         const loadSongData = async () => {
             try {
-                const { title, composer } = await getSongDetails(song_id);
+                const loadedSong = await getSongDetails(song_id);
 
-                setSong({ title, composer });
+                setSong(loadedSong);
             } catch (err) {
                 setError('Song wurde nicht gefunden');
             }
         };
 
         loadSongData();
-    }, []);
+    }, [song_id]);
 
     return (
         <article className="detail">
@@ -29,6 +29,13 @@ export default function SongDetails() {
                 <header className="detail__header">
                     <h1 className="page-title">{song.title}</h1>
                     {song.composer && <p className="detail__subtitle">{song.composer}</p>}
+                    <p className="detail__subtitle">
+                        Sammlungen: {song.sammlungen.map((sammlung, index) => (
+                            <span key={index}>
+                                <Link to={`/sammlungen/${sammlung.sammlung_id}`}>{sammlung.name}</Link>{index < song.sammlungen.length - 1 ? ', ' : ''}
+                            </span>
+                        ))}
+                    </p>
                 </header>
             )}
         </article>
