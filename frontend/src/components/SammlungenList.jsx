@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { AppContext } from './AppContext';
 import UpdateDialogue from './UpdateDialogue';
 import { updateSammlung, deleteSammlung } from '../helper/api';
+import { Link } from 'react-router-dom';
 
 const sammlungFields = [
     { name: 'name', label: 'Name', type: 'text', required: true },
@@ -68,9 +69,11 @@ export default function SammlungenList() {
             <ul className="item-list">
                 {filteredSammlungen.map((sammlung) => (
                     <li key={sammlung.sammlung_id} className="item">
-                        <div className="item__info">
-                            <span className="item__title">{sammlung.name}</span>
-                        </div>
+                        <Link to={`/sammlungen/${sammlung.sammlung_id}`} className="item__link">
+                            <div className="item__info">
+                                <span className="item__title">{sammlung.name}</span>
+                            </div>
+                        </Link>
                         <div className="item__actions">
                             <UpdateDialogue fields={sammlungFields} initialValues={sammlung} onSave={(values) => handleUpdateSammlung(sammlung.sammlung_id, values)} />
                             <button className="btn btn--danger" onClick={() => handleDeleteSammlung(sammlung.sammlung_id)}>Löschen</button>
