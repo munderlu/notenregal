@@ -435,9 +435,27 @@
     text-align: center;
 }
 
-/* Neue Sammlung anlegen: direkt unter der Liste */
-.dialog .add-form {
-    margin-top: var(--space-3);
+/* Eintrag „… als neue Sammlung anlegen“ am Ende der Liste */
+.checkbox-item__create {
+    display: block;
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: none;
+    background: transparent;
+    color: var(--color-primary);
+    font-weight: 600;
+    text-align: left;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+}
+
+.checkbox-item__create:hover {
+    background: var(--color-surface-hover);
+}
+
+.checkbox-item__create:disabled {
+    color: var(--color-text-muted);
+    cursor: progress;
 }
 
 /* Aktions-Buttons ganz unten, abgesetzt durch eine Linie */
@@ -599,7 +617,8 @@
         max-height: 45vh;
     }
 
-    .checkbox-item label {
+    .checkbox-item label,
+    .checkbox-item__create {
         min-height: 2.75rem;
     }
 

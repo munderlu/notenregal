@@ -6,7 +6,7 @@ export default function UpdateSammlungSong({ song, onSaved }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedIds, setSelectedIds] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [newSammlungName, setNewSammlungName] = useState('');
+    const [isCreating, setIsCreating] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
 
@@ -23,7 +23,6 @@ export default function UpdateSammlungSong({ song, onSaved }) {
             const currentIds = (song.sammlungen || []).map(s => s.sammlung_id);
             setSelectedIds(currentIds);
             setSearchTerm('');
-            setNewSammlungName('');
             setError(null);
             dialog.showModal();
         } else {
@@ -39,28 +38,36 @@ export default function UpdateSammlungSong({ song, onSaved }) {
         );
     };
 
+    const trimmedSearch = searchTerm.trim();
+
     const filteredSammlungen = sammlungen.filter(sammlung =>
-        sammlung.name.toLowerCase().includes(searchTerm.toLowerCase())
+        sammlung.name.toLowerCase().includes(trimmedSearch.toLowerCase())
     );
 
-    const handleCreateSammlung = async (e) => {
-        e.preventDefault();
-        const trimed = newSammlungName.trim();
-        if (!trimed) return;
+    // Anlegen nur anbieten, wenn es noch keine Sammlung mit genau diesem Namen gibt
+    const exactMatch = sammlungen.some(
+        sammlung => sammlung.name.toLowerCase() === trimmedSearch.toLowerCase()
+    );
+    const canCreate = trimmedSearch !== '' && !exactMatch;
+
+    const handleCreateSammlung = async () => {
+        if (!canCreate || isCreating) return;
+
+        setIsCreating(true);
+        setError(null);
 
         try {
-            const neueSammlung = await addSammlung({ name: trimed });
+            const neueSammlung = await addSammlung({ name: trimmedSearch });
 
-            setSammlungen(prev => [...prev, neueSammlung].sort((a, b) => a.name.localeCompare(b.name)
-            ));
-
+            setSammlungen(prev => [...prev, neueSammlung].sort((a, b) => a.name.localeCompare(b.name)));
             setSelectedIds(prev => [...prev, neueSammlung.sammlung_id]);
-
-            setNewSammlungName('');
+            setSearchTerm('');
         } catch (err) {
-            setError('Neue Sammlung konnte nicht erstellt werden.')
+            setError('Neue Sammlung konnte nicht erstellt werden.');
+        } finally {
+            setIsCreating(false);
         }
-    }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -101,9 +108,15 @@ export default function UpdateSammlungSong({ song, onSaved }) {
                     <input
                         type="text"
                         className="search__input"
-                        placeholder="Suche nach Sammlung"
+                        placeholder="Sammlung suchen oder neu anlegen"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleCreateSammlung();
+                            }
+                        }}
                     />
                     {searchTerm && (
                         <button type="button" className="search__clear" onClick={() => setSearchTerm('')} aria-label="Suche löschen">×</button>
@@ -124,24 +137,24 @@ export default function UpdateSammlungSong({ song, onSaved }) {
                                 </label>
                             </li>
                         ))}
-                        {filteredSammlungen.length === 0 && (
+                        {canCreate && (
+                            <li className="checkbox-item">
+                                <button
+                                    type="button"
+                                    className="checkbox-item__create"
+                                    onClick={handleCreateSammlung}
+                                    disabled={isCreating}
+                                >
+                                    + „{trimmedSearch}“ als neue Sammlung anlegen
+                                </button>
+                            </li>
+                        )}
+                        {filteredSammlungen.length === 0 && !canCreate && (
                             <li className="checkbox-item checkbox-item--empty">
                                 {searchTerm ? 'Keine Sammlung gefunden.' : 'Noch keine Sammlungen vorhanden.'}
                             </li>
                         )}
                     </ul>
-                </form>
-
-                <form className="add-form" onSubmit={handleCreateSammlung}>
-                    <input
-                        type="text"
-                        name="name"
-                        placeholder="Neue Sammlung anlegen"
-                        required
-                        value={newSammlungName}
-                        onChange={(e) => setNewSammlungName(e.target.value)}
-                    />
-                    <button type="submit" className="btn btn--secondary">Anlegen</button>
                 </form>
 
                 <div className="dialog__actions">
