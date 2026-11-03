@@ -1,10 +1,23 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { AppContext } from "./AppContext";
-import { getSammlungDetails, updateSong, deleteSong, deleteSongFromSammlung } from "../helper/api";
+import {
+    getSammlungDetails, updateSammlung, updateSong, deleteSong,
+    addSong, addSongToSammlung, deleteSongFromSammlung,
+} from "../helper/api";
 import UpdateDialogue from "./UpdateDialogue";
-import UpdateSongSammlung from "./UpdateSongSammlung";
+import UpdateZuordnung from "./UpdateZuordnung";
 import { songFields } from "./SongList";
+import { sammlungFields } from "./SammlungenList";
+
+const songTexts = {
+    button: 'Songs ändern',
+    title: 'Songs bearbeiten',
+    placeholder: 'Song suchen oder neu anlegen',
+    create: (title) => `„${title}“ als neuen Song anlegen`,
+    notFound: 'Kein Song gefunden.',
+    empty: 'Noch keine Songs vorhanden.',
+};
 
 export default function SammlungDetails() {
     const { sammlung_id } = useParams();
@@ -12,7 +25,7 @@ export default function SammlungDetails() {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const { setSongs } = useContext(AppContext);
+    const { songs, setSongs, setSammlungen } = useContext(AppContext);
 
     const loadSammlungData = async () => {
         try {
@@ -31,6 +44,38 @@ export default function SammlungDetails() {
     // Songs nur in dieser Seite (lokal) ändern, ohne alles neu zu laden
     const updateLocalSongs = (updater) => {
         setSammlung(prev => ({ ...prev, songs: updater(prev.songs) }));
+    };
+
+    // Namen der aktuellen Sammlung bearbeiten
+    const handleUpdateSammlung = async (values) => {
+        try {
+            const updatedSammlung = await updateSammlung(sammlung.sammlung_id, values);
+
+            setSammlung(prev => ({ ...prev, ...updatedSammlung }));
+            setSammlungen(prev => prev
+                .map(s => s.sammlung_id === updatedSammlung.sammlung_id ? updatedSammlung : s)
+                .sort((a, b) => a.name.localeCompare(b.name, 'de'))
+            );
+            setError(null);
+        } catch (err) {
+            setError('Sammlung konnte nicht aktualisiert werden.');
+            throw err; // Dialog bleibt bei Fehler offen
+        }
+    };
+
+    const handleCreateSong = async (title) => {
+        const neuerSong = await addSong({ title });
+
+        setSongs(prev => [...prev, neuerSong]);
+        return neuerSong.song_id;
+    };
+
+    const handleSaveSongs = async (toAdd, toDelete) => {
+        await Promise.all([
+            ...toAdd.map(id => addSongToSammlung(id, sammlung.sammlung_id)),
+            ...toDelete.map(id => deleteSongFromSammlung(id, sammlung.sammlung_id)),
+        ]);
+        await loadSammlungData();
     };
 
     const handleUpdateSong = async (song_id, values) => {
@@ -90,16 +135,29 @@ export default function SammlungDetails() {
             {sammlung.name && (
                 <>
                     <header className="detail__header">
-                        <h1 className="page-title">{sammlung.name}</h1>
-                        <p className="detail__subtitle">
-                            {songCount === 1 ? '1 Song' : `${songCount} Songs`}
-                        </p>
+                        <div className="detail__header-text">
+                            <h1 className="page-title">{sammlung.name}</h1>
+                            <p className="detail__subtitle">
+                                {songCount === 1 ? '1 Song' : `${songCount} Songs`}
+                            </p>
+                        </div>
+                        <UpdateDialogue
+                            fields={sammlungFields}
+                            initialValues={{ name: sammlung.name }}
+                            onSave={handleUpdateSammlung}
+                        />
                     </header>
 
                     <section className="detail__section">
                         <div className="detail__section-header">
                             <h2 className="section-title">Songs</h2>
-                            <UpdateSongSammlung sammlung={sammlung} onSaved={loadSammlungData} />
+                            <UpdateZuordnung
+                                items={songs.map(s => ({ id: s.song_id, label: s.title, meta: s.composer }))}
+                                initialIds={sammlung.songs.map(s => s.song_id)}
+                                onCreate={handleCreateSong}
+                                onSave={handleSaveSongs}
+                                texts={songTexts}
+                            />
                         </div>
 
                         {songCount > 0 ? (

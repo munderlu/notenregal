@@ -4,7 +4,7 @@ import UpdateDialogue from './UpdateDialogue';
 import { updateSammlung, deleteSammlung } from '../helper/api';
 import { Link } from 'react-router-dom';
 
-const sammlungFields = [
+export const sammlungFields = [
     { name: 'name', label: 'Name', type: 'text', required: true },
 ];
 

@@ -1,16 +1,23 @@
-import { useState, useEffect, useRef, useContext, useId } from 'react';
-import { AppContext } from './AppContext';
-import { addSammlung, addSongToSammlung, deleteSongFromSammlung } from '../helper/api';
+import { useState, useEffect, useRef, useId } from 'react';
 
-export default function UpdateSammlungSong({ song, onSaved }) {
+/*
+ * Allgemeiner Dialog, um Verknüpfungen per Checkbox zu bearbeiten
+ * (z. B. Sammlungen eines Songs oder Songs einer Sammlung).
+ *
+ * Props:
+ *   items       – alle auswählbaren Einträge als [{ id, label, meta? }]
+ *   initialIds  – IDs, die aktuell verknüpft sind
+ *   onCreate    – async (name) => neue ID; legt einen neuen Eintrag an
+ *   onSave      – async (toAdd, toDelete) => void; speichert die Änderungen
+ *   texts       – Beschriftungen: { button, title, placeholder, create(name), notFound, empty }
+ */
+export default function UpdateZuordnung({ items, initialIds, onCreate, onSave, texts }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedIds, setSelectedIds] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isCreating, setIsCreating] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
-
-    const { sammlungen, setSammlungen } = useContext(AppContext);
 
     const dialogRef = useRef(null);
     const formId = useId();
@@ -20,8 +27,7 @@ export default function UpdateSammlungSong({ song, onSaved }) {
         if (!dialog) return;
 
         if (isOpen) {
-            const currentIds = (song.sammlungen || []).map(s => s.sammlung_id);
-            setSelectedIds(currentIds);
+            setSelectedIds(initialIds);
             setSearchTerm('');
             setError(null);
             dialog.showModal();
@@ -30,40 +36,41 @@ export default function UpdateSammlungSong({ song, onSaved }) {
         }
     }, [isOpen]);
 
-    const handleToggle = (sammlung_id) => {
+    const handleToggle = (id) => {
         setSelectedIds(prev =>
-            prev.includes(sammlung_id)
-                ? prev.filter(id => id !== sammlung_id)
-                : [...prev, sammlung_id]
+            prev.includes(id)
+                ? prev.filter(selectedId => selectedId !== id)
+                : [...prev, id]
         );
     };
 
     const trimmedSearch = searchTerm.trim();
+    const search = trimmedSearch.toLowerCase();
 
-    const filteredSammlungen = sammlungen.filter(sammlung =>
-        sammlung.name.toLowerCase().includes(trimmedSearch.toLowerCase())
-    );
+    const filteredItems = items
+        .filter(item =>
+            item.label.toLowerCase().includes(search) ||
+            item.meta?.toLowerCase().includes(search)
+        )
+        .sort((a, b) => a.label.localeCompare(b.label, 'de'));
 
-    // Anlegen nur anbieten, wenn es noch keine Sammlung mit genau diesem Namen gibt
-    const exactMatch = sammlungen.some(
-        sammlung => sammlung.name.toLowerCase() === trimmedSearch.toLowerCase()
-    );
+    // Anlegen nur anbieten, wenn es noch keinen Eintrag mit genau diesem Namen gibt
+    const exactMatch = items.some(item => item.label.toLowerCase() === search);
     const canCreate = trimmedSearch !== '' && !exactMatch;
 
-    const handleCreateSammlung = async () => {
+    const handleCreate = async () => {
         if (!canCreate || isCreating) return;
 
         setIsCreating(true);
         setError(null);
 
         try {
-            const neueSammlung = await addSammlung({ name: trimmedSearch });
+            const newId = await onCreate(trimmedSearch);
 
-            setSammlungen(prev => [...prev, neueSammlung].sort((a, b) => a.name.localeCompare(b.name)));
-            setSelectedIds(prev => [...prev, neueSammlung.sammlung_id]);
+            setSelectedIds(prev => [...prev, newId]);
             setSearchTerm('');
         } catch (err) {
-            setError('Neue Sammlung konnte nicht erstellt werden.');
+            setError('Neuer Eintrag konnte nicht erstellt werden.');
         } finally {
             setIsCreating(false);
         }
@@ -74,47 +81,38 @@ export default function UpdateSammlungSong({ song, onSaved }) {
         setIsSaving(true);
         setError(null);
 
-        const initialIds = (song.sammlungen || []).map(s => s.sammlung_id);
-
         const toAdd = selectedIds.filter(id => !initialIds.includes(id));
-
         const toDelete = initialIds.filter(id => !selectedIds.includes(id));
 
         try {
-            await Promise.all([
-                ...toAdd.map(id => addSongToSammlung(song.song_id, id)),
-                ...toDelete.map(id => deleteSongFromSammlung(song.song_id, id))
-            ]);
-
-            await onSaved();
+            await onSave(toAdd, toDelete);
             setIsOpen(false);
         } catch (err) {
-            console.error('Error updating values:', err);
-            setError('Einstellungen konnten nicht gespeichert werden.');
+            console.error('Error saving zuordnung:', err);
+            setError('Änderungen konnten nicht gespeichert werden.');
         } finally {
             setIsSaving(false);
         }
     };
 
-
     return (
         <div className="UpdateDialogue">
-            <button type="button" className="btn btn--secondary" onClick={() => setIsOpen(true)}>Sammlungen ändern</button>
+            <button type="button" className="btn btn--secondary" onClick={() => setIsOpen(true)}>{texts.button}</button>
             <dialog ref={dialogRef} className="dialog" onClose={() => setIsOpen(false)}>
-                <h2 className="dialog__title">Sammlungen bearbeiten</h2>
+                <h2 className="dialog__title">{texts.title}</h2>
                 {error && <p className="alert" role="alert">{error}</p>}
 
                 <div className="search">
                     <input
                         type="text"
                         className="search__input"
-                        placeholder="Sammlung suchen oder neu anlegen"
+                        placeholder={texts.placeholder}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                                 e.preventDefault();
-                                handleCreateSammlung();
+                                handleCreate();
                             }
                         }}
                     />
@@ -125,15 +123,18 @@ export default function UpdateSammlungSong({ song, onSaved }) {
 
                 <form id={formId} className="dialog__form" onSubmit={handleSubmit}>
                     <ul className="checkbox-list">
-                        {filteredSammlungen.map(sammlung => (
-                            <li key={sammlung.sammlung_id} className="checkbox-item">
+                        {filteredItems.map(item => (
+                            <li key={item.id} className="checkbox-item">
                                 <label>
                                     <input
                                         type="checkbox"
-                                        checked={selectedIds.includes(sammlung.sammlung_id)}
-                                        onChange={() => handleToggle(sammlung.sammlung_id)}
+                                        checked={selectedIds.includes(item.id)}
+                                        onChange={() => handleToggle(item.id)}
                                     />
-                                    <span>{sammlung.name}</span>
+                                    <span>
+                                        {item.label}
+                                        {item.meta && <small className="checkbox-item__meta">{item.meta}</small>}
+                                    </span>
                                 </label>
                             </li>
                         ))}
@@ -142,16 +143,16 @@ export default function UpdateSammlungSong({ song, onSaved }) {
                                 <button
                                     type="button"
                                     className="checkbox-item__create"
-                                    onClick={handleCreateSammlung}
+                                    onClick={handleCreate}
                                     disabled={isCreating}
                                 >
-                                    + „{trimmedSearch}“ als neue Sammlung anlegen
+                                    + {texts.create(trimmedSearch)}
                                 </button>
                             </li>
                         )}
-                        {filteredSammlungen.length === 0 && !canCreate && (
+                        {filteredItems.length === 0 && !canCreate && (
                             <li className="checkbox-item checkbox-item--empty">
-                                {searchTerm ? 'Keine Sammlung gefunden.' : 'Noch keine Sammlungen vorhanden.'}
+                                {searchTerm ? texts.notFound : texts.empty}
                             </li>
                         )}
                     </ul>
