@@ -1,23 +1,24 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getSongDetails } from "../helper/api";
+import UpdateSammlungSong from "./UpdateSammlungSong";
 
 export default function SongDetails() {
     const { song_id } = useParams();
     const [song, setSong] = useState({});
     const [error, setError] = useState(null);
 
+    const loadSongData = async () => {
+        try {
+            const loadedSong = await getSongDetails(song_id);
+
+            setSong(loadedSong);
+        } catch (err) {
+            setError('Song wurde nicht gefunden');
+        }
+    };
+
     useEffect(() => {
-        const loadSongData = async () => {
-            try {
-                const loadedSong = await getSongDetails(song_id);
-
-                setSong(loadedSong);
-            } catch (err) {
-                setError('Song wurde nicht gefunden');
-            }
-        };
-
         loadSongData();
     }, [song_id]);
 
@@ -36,6 +37,10 @@ export default function SongDetails() {
                             </span>
                         ))}
                     </p>
+                    <UpdateSammlungSong
+                        song={song}
+                        onSaved={loadSongData}
+                    />
                 </header>
             )}
         </article>
