@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from 'react';
+import { useState, useEffect, useRef, useContext, useId } from 'react';
 import { AppContext } from './AppContext';
 import { addSammlung, addSongToSammlung, deleteSongFromSammlung } from '../helper/api';
 
@@ -13,6 +13,7 @@ export default function UpdateSammlungSong({ song, onSaved }) {
     const { sammlungen, setSammlungen } = useContext(AppContext);
 
     const dialogRef = useRef(null);
+    const formId = useId();
 
     useEffect(() => {
         const dialog = dialogRef.current;
@@ -91,29 +92,28 @@ export default function UpdateSammlungSong({ song, onSaved }) {
 
     return (
         <div className="UpdateDialogue">
-            <button className="btn btn--secondary" onClick={() => setIsOpen(true)}>Bearbeiten</button>
+            <button type="button" className="btn btn--secondary" onClick={() => setIsOpen(true)}>Sammlungen ändern</button>
             <dialog ref={dialogRef} className="dialog" onClose={() => setIsOpen(false)}>
+                <h2 className="dialog__title">Sammlungen bearbeiten</h2>
                 {error && <p className="alert" role="alert">{error}</p>}
-                <h2 className="dialog__title">Bearbeiten</h2>
+
                 <div className="search">
                     <input
                         type="text"
-                        placeholder="Suche nach Sammlung"
-                        onChange={(e) => {
-                            setSearchTerm(e.target.value);
-                        }}
                         className="search__input"
+                        placeholder="Suche nach Sammlung"
                         value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     {searchTerm && (
-                        <button className="search__clear" onClick={() => setSearchTerm("")} aria-label="Suche löschen">×</button>
+                        <button type="button" className="search__clear" onClick={() => setSearchTerm('')} aria-label="Suche löschen">×</button>
                     )}
                 </div>
 
-                <form className="dialog__form" onSubmit={handleSubmit}>
-                    <ul className='checkbox-list'>
+                <form id={formId} className="dialog__form" onSubmit={handleSubmit}>
+                    <ul className="checkbox-list">
                         {filteredSammlungen.map(sammlung => (
-                            <li key={sammlung.sammlung_id} className='checkbox-item'>
+                            <li key={sammlung.sammlung_id} className="checkbox-item">
                                 <label>
                                     <input
                                         type="checkbox"
@@ -124,24 +124,33 @@ export default function UpdateSammlungSong({ song, onSaved }) {
                                 </label>
                             </li>
                         ))}
+                        {filteredSammlungen.length === 0 && (
+                            <li className="checkbox-item checkbox-item--empty">
+                                {searchTerm ? 'Keine Sammlung gefunden.' : 'Noch keine Sammlungen vorhanden.'}
+                            </li>
+                        )}
                     </ul>
-                    <div className="dialog__actions">
-                        <button type="button" className="btn btn--secondary" onClick={() => setIsOpen(false)}>Abbrechen</button>
-                        <button className="btn btn--primary" type="submit" disabled={isSaving}>{isSaving ? 'Speichern…' : 'Aktualisieren'}</button>
-                    </div>
                 </form>
+
                 <form className="add-form" onSubmit={handleCreateSammlung}>
                     <input
                         type="text"
                         name="name"
-                        placeholder="Zu neuer Sammlung hinzufügen"
+                        placeholder="Neue Sammlung anlegen"
                         required
                         value={newSammlungName}
-                        onChange={(e) => { setNewSammlungName(e.target.value); }}
+                        onChange={(e) => setNewSammlungName(e.target.value)}
                     />
-                    <button type="submit" className="btn btn--primary">Hinzufügen</button>
+                    <button type="submit" className="btn btn--secondary">Anlegen</button>
                 </form>
+
+                <div className="dialog__actions">
+                    <button type="button" className="btn btn--secondary" onClick={() => setIsOpen(false)}>Abbrechen</button>
+                    <button type="submit" form={formId} className="btn btn--primary" disabled={isSaving}>
+                        {isSaving ? 'Speichern…' : 'Speichern'}
+                    </button>
+                </div>
             </dialog>
         </div>
-    )
+    );
 }

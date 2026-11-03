@@ -27,21 +27,32 @@ export default function SongDetails() {
             <Link to="/songs" className="back-link">← Alle Songs</Link>
             {error && <p className="alert" role="alert">{error}</p>}
             {song.title && (
-                <header className="detail__header">
-                    <h1 className="page-title">{song.title}</h1>
-                    {song.composer && <p className="detail__subtitle">{song.composer}</p>}
-                    <p className="detail__subtitle">
-                        Sammlungen: {song.sammlungen.map((sammlung, index) => (
-                            <span key={index}>
-                                <Link to={`/sammlungen/${sammlung.sammlung_id}`}>{sammlung.name}</Link>{index < song.sammlungen.length - 1 ? ', ' : ''}
-                            </span>
-                        ))}
-                    </p>
-                    <UpdateSammlungSong
-                        song={song}
-                        onSaved={loadSongData}
-                    />
-                </header>
+                <>
+                    <header className="detail__header">
+                        <h1 className="page-title">{song.title}</h1>
+                        {song.composer && <p className="detail__subtitle">{song.composer}</p>}
+                    </header>
+
+                    <section className="detail__section">
+                        <div className="detail__section-header">
+                            <h2 className="section-title">Sammlungen</h2>
+                            <UpdateSammlungSong song={song} onSaved={loadSongData} />
+                        </div>
+                        {song.sammlungen?.length > 0 ? (
+                            <ul className="chip-list">
+                                {song.sammlungen.map(sammlung => (
+                                    <li key={sammlung.sammlung_id}>
+                                        <Link to={`/sammlungen/${sammlung.sammlung_id}`} className="chip">
+                                            {sammlung.name}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="detail__empty">Dieser Song ist noch in keiner Sammlung.</p>
+                        )}
+                    </section>
+                </>
             )}
         </article>
     );
