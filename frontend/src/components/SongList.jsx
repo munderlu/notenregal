@@ -4,7 +4,7 @@ import UpdateDialogue from './UpdateDialogue';
 import { updateSong, deleteSong } from '../helper/api';
 import { Link } from 'react-router-dom';
 
-const songFields = [
+export const songFields = [
     { name: 'title', label: 'Titel', type: 'text', required: true },
     { name: 'composer', label: 'Komponist', type: 'text', required: false },
 ];

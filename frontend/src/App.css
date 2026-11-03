@@ -242,6 +242,12 @@
     font-size: 0.875rem;
 }
 
+.item--empty {
+    justify-content: center;
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
 .item__actions {
     display: flex;
     flex-shrink: 0;
@@ -347,7 +353,8 @@
     margin-bottom: 0;
 }
 
-.detail__section-header .btn {
+/* Nur den Öffnen-Button verkleinern, nicht die Buttons im Dialog */
+.detail__section-header > .UpdateDialogue > .btn {
     padding: var(--space-1) var(--space-3);
     font-size: 0.875rem;
 }
@@ -425,6 +432,13 @@
 
 .checkbox-item span {
     overflow-wrap: anywhere;
+}
+
+/* Komponist unter dem Songtitel in der Checkbox-Liste */
+.checkbox-item__meta {
+    display: block;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
 }
 
 /* Hinweis bei leerer Liste / keinem Suchtreffer */
@@ -591,6 +605,12 @@
 
     .item__actions .btn--danger {
         padding: var(--space-2);
+    }
+
+    /* Drei Buttons (Sammlung-Detail): bei Platzmangel umbrechen */
+    .item__actions {
+        flex-wrap: wrap;
+        justify-content: flex-end;
     }
 
     .dialog {
