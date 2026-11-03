@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { AppContext } from './AppContext';
 import UpdateDialogue from './UpdateDialogue';
+import { TrashIcon } from './Icons';
 import { updateSammlung, deleteSammlung } from '../helper/api';
 import { Link } from 'react-router-dom';
 
@@ -75,8 +76,21 @@ export default function SammlungenList() {
                             </div>
                         </Link>
                         <div className="item__actions">
-                            <UpdateDialogue fields={sammlungFields} initialValues={sammlung} onSave={(values) => handleUpdateSammlung(sammlung.sammlung_id, values)} />
-                            <button className="btn btn--danger" onClick={() => handleDeleteSammlung(sammlung.sammlung_id)}>Löschen</button>
+                            <UpdateDialogue
+                                fields={sammlungFields}
+                                initialValues={sammlung}
+                                onSave={(values) => handleUpdateSammlung(sammlung.sammlung_id, values)}
+                                label={`„${sammlung.name}“ bearbeiten`}
+                            />
+                            <button
+                                type="button"
+                                className="btn btn--danger btn--icon"
+                                onClick={() => handleDeleteSammlung(sammlung.sammlung_id)}
+                                aria-label={`„${sammlung.name}“ löschen`}
+                                title={`„${sammlung.name}“ löschen`}
+                            >
+                                <TrashIcon />
+                            </button>
                         </div>
                     </li>
                 ))}

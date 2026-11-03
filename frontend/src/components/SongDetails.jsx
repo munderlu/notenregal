@@ -82,6 +82,7 @@ export default function SongDetails() {
                             fields={songFields}
                             initialValues={{ title: song.title, composer: song.composer }}
                             onSave={handleUpdateSong}
+                            showLabel
                         />
                     </header>
 

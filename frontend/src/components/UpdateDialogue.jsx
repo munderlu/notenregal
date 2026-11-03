@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef, useId } from 'react';
+import { PencilIcon } from './Icons';
 
-export default function UpdateDialogue({ fields, initialValues, onSave }) {
+// showLabel: Text „Bearbeiten“ neben dem Stift anzeigen (z. B. im Kopf der Detailseite)
+// label: Beschriftung für Screenreader/Tooltip, wenn nur das Icon sichtbar ist
+export default function UpdateDialogue({ fields, initialValues, onSave, showLabel = false, label = 'Bearbeiten' }) {
     const [isOpen, setIsOpen] = useState(false);
     const [values, setValues] = useState(initialValues);
 
@@ -32,7 +35,16 @@ export default function UpdateDialogue({ fields, initialValues, onSave }) {
 
     return (
         <div className="UpdateDialogue">
-            <button className="btn btn--secondary" onClick={() => setIsOpen(true)}>Bearbeiten</button>
+            <button
+                type="button"
+                className={showLabel ? 'btn btn--secondary btn--with-icon' : 'btn btn--secondary btn--icon'}
+                onClick={() => setIsOpen(true)}
+                aria-label={showLabel ? undefined : label}
+                title={showLabel ? undefined : label}
+            >
+                <PencilIcon />
+                {showLabel && <span>Bearbeiten</span>}
+            </button>
             <dialog ref={dialogRef} className="dialog" onClose={() => setIsOpen(false)}>
                 <h2 className="dialog__title">Bearbeiten</h2>
                 <form className="dialog__form" onSubmit={handleSubmit}>

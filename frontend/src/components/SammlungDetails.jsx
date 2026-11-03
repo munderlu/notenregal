@@ -6,6 +6,7 @@ import {
     addSong, addSongToSammlung, deleteSongFromSammlung,
 } from "../helper/api";
 import UpdateDialogue from "./UpdateDialogue";
+import { TrashIcon } from "./Icons";
 import UpdateZuordnung from "./UpdateZuordnung";
 import { songFields } from "./SongList";
 import { sammlungFields } from "./SammlungenList";
@@ -145,6 +146,7 @@ export default function SammlungDetails() {
                             fields={sammlungFields}
                             initialValues={{ name: sammlung.name }}
                             onSave={handleUpdateSammlung}
+                            showLabel
                         />
                     </header>
 
@@ -189,6 +191,7 @@ export default function SammlungDetails() {
                                                     fields={songFields}
                                                     initialValues={song}
                                                     onSave={(values) => handleUpdateSong(song.song_id, values)}
+                                                    label={`„${song.title}“ bearbeiten`}
                                                 />
                                                 <button
                                                     type="button"
@@ -200,11 +203,12 @@ export default function SammlungDetails() {
                                                 </button>
                                                 <button
                                                     type="button"
-                                                    className="btn btn--danger"
+                                                    className="btn btn--danger btn--icon"
                                                     onClick={() => handleDeleteSong(song.song_id)}
-                                                    title="Song komplett löschen"
+                                                    aria-label={`„${song.title}“ komplett löschen`}
+                                                    title="Song komplett löschen (auch aus allen anderen Sammlungen)"
                                                 >
-                                                    Löschen
+                                                    <TrashIcon />
                                                 </button>
                                             </div>
                                         </li>

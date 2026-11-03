@@ -145,6 +145,34 @@
     font-size: 0.875rem;
 }
 
+/* Icon-Buttons (Stift, Papierkorb) */
+.icon {
+    display: block;
+    flex-shrink: 0;
+}
+
+.btn.btn--icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+}
+
+.btn--danger.btn--icon:hover {
+    border-color: var(--color-danger);
+    background: var(--color-danger-bg);
+    text-decoration: none;
+}
+
+/* Icon + Text nebeneinander */
+.btn--with-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
 /* ===== Fehlermeldung ===== */
 .alert {
     margin-bottom: var(--space-3);
@@ -619,6 +647,13 @@
 
     .item__actions .btn--danger {
         padding: var(--space-2);
+    }
+
+    /* Icon-Buttons: 44px Tippfläche */
+    .btn.btn--icon {
+        width: 2.75rem;
+        height: 2.75rem;
+        padding: 0;
     }
 
     /* Drei Buttons (Sammlung-Detail): bei Platzmangel umbrechen */

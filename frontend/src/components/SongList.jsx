@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { AppContext } from './AppContext';
 import UpdateDialogue from './UpdateDialogue';
+import { TrashIcon } from './Icons';
 import { updateSong, deleteSong } from '../helper/api';
 import { Link } from 'react-router-dom';
 
@@ -77,8 +78,21 @@ export default function SongList() {
                             </div>
                         </Link>
                         <div className="item__actions">
-                            <UpdateDialogue fields={songFields} initialValues={song} onSave={(values) => handleUpdateSong(song.song_id, values)} />
-                            <button className="btn btn--danger" onClick={() => handleDeleteSong(song.song_id)}>Löschen</button>
+                            <UpdateDialogue
+                                fields={songFields}
+                                initialValues={song}
+                                onSave={(values) => handleUpdateSong(song.song_id, values)}
+                                label={`„${song.title}“ bearbeiten`}
+                            />
+                            <button
+                                type="button"
+                                className="btn btn--danger btn--icon"
+                                onClick={() => handleDeleteSong(song.song_id)}
+                                aria-label={`„${song.title}“ löschen`}
+                                title={`„${song.title}“ löschen`}
+                            >
+                                <TrashIcon />
+                            </button>
                         </div>
                     </li>
                 ))}
