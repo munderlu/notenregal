@@ -5,6 +5,7 @@ import { getSongDetails, updateSong, addSammlung, addSongToSammlung, deleteSongF
 import UpdateDialogue from "./UpdateDialogue";
 import UpdateZuordnung from "./UpdateZuordnung";
 import { songFields } from "./SongList";
+import UploadNoten from "./UploadNoten";
 
 const sammlungTexts = {
     button: 'Sammlungen ändern',
@@ -110,6 +111,7 @@ export default function SongDetails() {
                         ) : (
                             <p className="detail__empty">Dieser Song ist noch in keiner Sammlung.</p>
                         )}
+                        <UploadNoten />
                     </section>
                 </>
             )}

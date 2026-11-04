@@ -16,8 +16,7 @@ CREATE TABLE IF NOT EXISTS Songs (
 -- Eine Note (PDF für ein Instrument) gehört zu genau einem Song.
 CREATE TABLE IF NOT EXISTS Noten (
     noten_id    INTEGER PRIMARY KEY AUTOINCREMENT,
-    instrument  TEXT,
-    pdf_link    TEXT NOT NULL,  -- Pfad/URL der PDF im WebDAV (Nextcloud)
+    instrument  TEXT NOT NULL,
     song_id     INTEGER NOT NULL
                 REFERENCES Songs (song_id) ON DELETE CASCADE
 );

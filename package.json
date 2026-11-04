@@ -22,5 +22,8 @@
     "workspaces": [
         "backend",
         "frontend"
-    ]
+    ],
+    "dependencies": {
+        "dotenv": "^18.0.9"
+    }
 }

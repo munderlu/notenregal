@@ -209,3 +209,32 @@ export async function deleteSongFromSammlung(song_id, sammlung_id) {
         throw err;
     }
 }
+
+// ------------------------------ Noten ---------------------------------------------
+
+export async function uploadPDF(formData) {
+    try {
+        const response = await fetch('/api/noten/upload', {
+            method: 'POST',
+            body: formData // Kein Header für Content-Type manuell setzen!
+        });
+        const result = await response.json();
+    } catch (error) {
+        console.error('Upload fehlgeschlagen:', error);
+    }
+}
+
+export async function getNoten(song_id) {
+    try {
+        const response = await fetch(`/api/noten/${song_id}`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`)
+        }
+
+        return await response.json();
+    } catch (err) {
+        console.error('Error fetching noten');
+        throw err;
+    }
+}

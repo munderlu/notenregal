@@ -2,6 +2,7 @@
 import express from "express";
 import { songsRouter } from "./routes/song_routes.js";
 import { sammlungsRouter } from "./routes/sammlung_routes.js";
+import { notenRouter } from "./routes/noten_routes.js";
 
 export const app = express();
 
@@ -13,3 +14,4 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/songs", songsRouter);
 app.use("/api/sammlungen", sammlungsRouter);
+app.use("/api/noten", notenRouter);
