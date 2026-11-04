@@ -1,27 +1,18 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { AppContext } from "./AppContext";
-import { getSongDetails, updateSong, addSammlung, addSongToSammlung, deleteSongFromSammlung } from "../helper/api";
+import { getSongDetails, updateSong } from "../helper/api";
 import UpdateDialogue from "./UpdateDialogue";
-import UpdateZuordnung from "./UpdateZuordnung";
 import { songFields } from "./SongList";
-import UploadNoten from "./UploadNoten";
-
-const sammlungTexts = {
-    button: 'Sammlungen ändern',
-    title: 'Sammlungen bearbeiten',
-    placeholder: 'Sammlung suchen oder neu anlegen',
-    create: (name) => `„${name}“ als neue Sammlung anlegen`,
-    notFound: 'Keine Sammlung gefunden.',
-    empty: 'Noch keine Sammlungen vorhanden.',
-};
+import SongSammlungen from "./SongSammlungen";
+import SongNoten from "./SongNoten";
 
 export default function SongDetails() {
     const { song_id } = useParams();
     const [song, setSong] = useState({});
     const [error, setError] = useState(null);
 
-    const { setSongs, sammlungen, setSammlungen } = useContext(AppContext);
+    const { setSongs } = useContext(AppContext);
 
     const loadSongData = async () => {
         try {
@@ -53,21 +44,6 @@ export default function SongDetails() {
         }
     };
 
-    const handleCreateSammlung = async (name) => {
-        const neueSammlung = await addSammlung({ name });
-
-        setSammlungen(prev => [...prev, neueSammlung].sort((a, b) => a.name.localeCompare(b.name, 'de')));
-        return neueSammlung.sammlung_id;
-    };
-
-    const handleSaveSammlungen = async (toAdd, toDelete) => {
-        await Promise.all([
-            ...toAdd.map(id => addSongToSammlung(song.song_id, id)),
-            ...toDelete.map(id => deleteSongFromSammlung(song.song_id, id)),
-        ]);
-        await loadSongData();
-    };
-
     return (
         <article className="detail">
             <Link to="/songs" className="back-link">← Alle Songs</Link>
@@ -87,32 +63,8 @@ export default function SongDetails() {
                         />
                     </header>
 
-                    <section className="detail__section">
-                        <div className="detail__section-header">
-                            <h2 className="section-title">Sammlungen</h2>
-                            <UpdateZuordnung
-                                items={sammlungen.map(s => ({ id: s.sammlung_id, label: s.name }))}
-                                initialIds={song.sammlungen.map(s => s.sammlung_id)}
-                                onCreate={handleCreateSammlung}
-                                onSave={handleSaveSammlungen}
-                                texts={sammlungTexts}
-                            />
-                        </div>
-                        {song.sammlungen?.length > 0 ? (
-                            <ul className="chip-list">
-                                {song.sammlungen.map(sammlung => (
-                                    <li key={sammlung.sammlung_id}>
-                                        <Link to={`/sammlungen/${sammlung.sammlung_id}`} className="chip">
-                                            {sammlung.name}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p className="detail__empty">Dieser Song ist noch in keiner Sammlung.</p>
-                        )}
-                        <UploadNoten />
-                    </section>
+                    <SongSammlungen song={song} onChanged={loadSongData} />
+                    <SongNoten song_id={song.song_id} />
                 </>
             )}
         </article>

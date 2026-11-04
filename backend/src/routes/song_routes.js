@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { getDb } from "../db/index.js";
+import { deleteNotenFile } from "../webdav.js";
 
 export const songsRouter = Router();
 
@@ -58,7 +59,7 @@ songsRouter.put("/:song_id", (req, res) => {
     }
 });
 
-songsRouter.delete("/:song_id", (req, res) => {
+songsRouter.delete("/:song_id", async (req, res) => {
     try {
         const { song_id } = req.params;
         const db = getDb();
@@ -66,7 +67,23 @@ songsRouter.delete("/:song_id", (req, res) => {
         if (!existingSong) {
             return res.status(404).json({ error: "Song nicht gefunden" });
         }
+        // IDs merken, bevor die Noten per ON DELETE CASCADE mitgelöscht werden
+        const notenIds = db
+            .prepare("SELECT noten_id FROM Noten WHERE song_id = ?")
+            .all(song_id)
+            .map(n => n.noten_id);
+
         db.prepare("DELETE FROM Songs WHERE song_id = ?").run(song_id);
+
+        // PDFs im WebDAV entfernen. Der Song ist dann schon gelöscht –
+        // schlägt eine Datei fehl, wird das nur protokolliert.
+        const results = await Promise.allSettled(notenIds.map(deleteNotenFile));
+        results.forEach((r, i) => {
+            if (r.status === 'rejected') {
+                console.error(`PDF für Noten ${notenIds[i]} konnte nicht gelöscht werden:`, r.reason);
+            }
+        });
+
         res.status(204).send();
     }
     catch (err) {

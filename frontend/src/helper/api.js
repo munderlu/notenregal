@@ -212,15 +212,20 @@ export async function deleteSongFromSammlung(song_id, sammlung_id) {
 
 // ------------------------------ Noten ---------------------------------------------
 
-export async function uploadPDF(formData) {
+export async function uploadNoten(song_id, formData) {
     try {
-        const response = await fetch('/api/noten/upload', {
+        const response = await fetch(`/api/noten/upload/${song_id}`, {
             method: 'POST',
             body: formData // Kein Header für Content-Type manuell setzen!
         });
-        const result = await response.json();
-    } catch (error) {
-        console.error('Upload fehlgeschlagen:', error);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (err) {
+        console.error('Upload fehlgeschlagen:', err);
+        throw err;
     }
 }
 
@@ -235,6 +240,50 @@ export async function getNoten(song_id) {
         return await response.json();
     } catch (err) {
         console.error('Error fetching noten');
+        throw err;
+    }
+}
+
+// URL zum Anzeigen (inline) bzw. Herunterladen (download = true) einer PDF
+export function getNotenUrl(noten_id, download = false) {
+    return `/api/noten/download/${noten_id}${download ? '?download' : ''}`;
+}
+
+export async function updateNoten(noten_id, values) {
+    try {
+        const response = await fetch(`/api/noten/${noten_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(values),
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (err) {
+        console.error("Error updating noten: ", err);
+        throw err;
+    }
+}
+
+export async function deleteNoten(noten_id) {
+    try {
+        const confirmed = window.confirm('Möchten Sie diese Noten wirklich löschen?');
+        if (!confirmed) return 0;
+
+        const response = await fetch(`/api/noten/${noten_id}`, {
+            method: 'DELETE',
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        return 1;
+    } catch (err) {
+        console.error("Error deleting noten: ", err);
         throw err;
     }
 }
