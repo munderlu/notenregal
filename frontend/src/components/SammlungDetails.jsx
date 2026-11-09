@@ -1,30 +1,36 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { AppContext } from "./AppContext";
 import {
-    getSammlungDetails, updateSammlung, updateSong, deleteSong,
+    getSammlungDetails, updateSammlung, deleteSammlung,
     addSong, addSongToSammlung, deleteSongFromSammlung,
 } from "../helper/api";
+import { einbandFarbe } from "../helper/einband";
 import UpdateDialogue from "./UpdateDialogue";
-import { TrashIcon } from "./Icons";
+import { ChevronLeftIcon, CloseIcon } from "./Icons";
 import UpdateZuordnung from "./UpdateZuordnung";
-import { songFields } from "./SongList";
+import SearchField from "./SearchField";
+import { filterSongs } from "./SongList";
 import { sammlungFields } from "./SammlungenList";
 
 const songTexts = {
-    button: 'Songs ändern',
-    title: 'Songs bearbeiten',
+    button: 'Songs zuordnen',
+    title: 'Songs in dieser Sammlung',
     placeholder: 'Song suchen oder neu anlegen',
     create: (title) => `„${title}“ als neuen Song anlegen`,
     notFound: 'Kein Song gefunden.',
     empty: 'Noch keine Songs vorhanden.',
 };
 
+// Ab dieser Anzahl Songs lohnt sich ein Suchfeld
+const SUCHE_AB = 8;
+
 export default function SammlungDetails() {
     const { sammlung_id } = useParams();
     const [sammlung, setSammlung] = useState({});
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
 
     const { songs, setSongs, setSammlungen } = useContext(AppContext);
 
@@ -33,8 +39,9 @@ export default function SammlungDetails() {
             const loadedSammlung = await getSammlungDetails(sammlung_id);
 
             setSammlung(loadedSammlung);
+            setError(null);
         } catch (err) {
-            setError('Sammlung wurde nicht gefunden');
+            setError('Diese Sammlung gibt es nicht (mehr).');
         }
     };
 
@@ -42,26 +49,20 @@ export default function SammlungDetails() {
         loadSammlungData();
     }, [sammlung_id]);
 
-    // Songs nur in dieser Seite (lokal) ändern, ohne alles neu zu laden
-    const updateLocalSongs = (updater) => {
-        setSammlung(prev => ({ ...prev, songs: updater(prev.songs) }));
+    const handleUpdateSammlung = async (values) => {
+        const updatedSammlung = await updateSammlung(sammlung.sammlung_id, values);
+
+        setSammlung(prev => ({ ...prev, ...updatedSammlung }));
+        setSammlungen(prev => prev.map(
+            s => s.sammlung_id === updatedSammlung.sammlung_id ? updatedSammlung : s
+        ));
     };
 
-    // Namen der aktuellen Sammlung bearbeiten
-    const handleUpdateSammlung = async (values) => {
-        try {
-            const updatedSammlung = await updateSammlung(sammlung.sammlung_id, values);
+    const handleDeleteSammlung = async () => {
+        await deleteSammlung(sammlung.sammlung_id);
 
-            setSammlung(prev => ({ ...prev, ...updatedSammlung }));
-            setSammlungen(prev => prev
-                .map(s => s.sammlung_id === updatedSammlung.sammlung_id ? updatedSammlung : s)
-                .sort((a, b) => a.name.localeCompare(b.name, 'de'))
-            );
-            setError(null);
-        } catch (err) {
-            setError('Sammlung konnte nicht aktualisiert werden.');
-            throw err; // Dialog bleibt bei Fehler offen
-        }
+        setSammlungen(prev => prev.filter(s => s.sammlung_id !== sammlung.sammlung_id));
+        navigate('/sammlungen');
     };
 
     const handleCreateSong = async (title) => {
@@ -79,65 +80,32 @@ export default function SammlungDetails() {
         await loadSammlungData();
     };
 
-    const handleUpdateSong = async (song_id, values) => {
-        try {
-            const updatedSong = await updateSong(song_id, values);
-
-            updateLocalSongs(songs => songs.map(
-                song => song.song_id === song_id ? { ...song, ...updatedSong } : song
-            ));
-            setSongs(prev => prev.map(
-                song => song.song_id === song_id ? updatedSong : song
-            ));
-            setError(null);
-        } catch (err) {
-            setError('Song konnte nicht aktualisiert werden.');
-            throw err; // Dialog bleibt bei Fehler offen
-        }
-    };
-
     const handleRemoveSong = async (song_id) => {
         try {
             await deleteSongFromSammlung(song_id, sammlung.sammlung_id);
 
-            updateLocalSongs(songs => songs.filter(song => song.song_id !== song_id));
+            setSammlung(prev => ({ ...prev, songs: prev.songs.filter(song => song.song_id !== song_id) }));
             setError(null);
         } catch (err) {
-            setError('Song konnte nicht aus der Sammlung entfernt werden.');
+            setError('Song konnte nicht aus der Sammlung genommen werden.');
         }
     };
-
-    const handleDeleteSong = async (song_id) => {
-        try {
-            const answer = await deleteSong(song_id);
-
-            if (answer) {
-                updateLocalSongs(songs => songs.filter(song => song.song_id !== song_id));
-                setSongs(prev => prev.filter(song => song.song_id !== song_id));
-                setError(null);
-            }
-        } catch (err) {
-            setError('Song konnte nicht gelöscht werden.');
-        }
-    };
-
-    const search = searchTerm.trim().toLowerCase();
-    const filteredSongs = (sammlung.songs || []).filter(song =>
-        song.title.toLowerCase().includes(search) ||
-        song.composer?.toLowerCase().includes(search)
-    );
 
     const songCount = sammlung.songs?.length ?? 0;
+    const filteredSongs = filterSongs(sammlung.songs || [], searchTerm);
 
     return (
         <article className="detail">
-            <Link to="/sammlungen" className="back-link">← Alle Sammlungen</Link>
+            <Link to="/sammlungen" className="back-link"><ChevronLeftIcon size={16} />Sammlungen</Link>
             {error && <p className="alert" role="alert">{error}</p>}
             {sammlung.name && (
                 <>
-                    <header className="detail__header">
+                    <header
+                        className="detail__header detail__header--einband"
+                        style={{ '--einband': einbandFarbe(sammlung.sammlung_id) }}
+                    >
                         <div className="detail__header-text">
-                            <h1 className="page-title">{sammlung.name}</h1>
+                            <h1 className="detail__title">{sammlung.name}</h1>
                             <p className="detail__subtitle">
                                 {songCount === 1 ? '1 Song' : `${songCount} Songs`}
                             </p>
@@ -146,13 +114,18 @@ export default function SammlungDetails() {
                             fields={sammlungFields}
                             initialValues={{ name: sammlung.name }}
                             onSave={handleUpdateSammlung}
-                            showLabel
+                            title="Sammlung bearbeiten"
+                            onDelete={handleDeleteSammlung}
+                            deleteText={{
+                                button: 'Sammlung löschen',
+                                confirm: 'Sammlung löschen? Die Songs und ihre Noten bleiben erhalten.',
+                            }}
                         />
                     </header>
 
                     <section className="detail__section">
-                        <div className="detail__section-header">
-                            <h2 className="section-title">Songs</h2>
+                        <div className="section-head">
+                            <h2 className="section-title">Inhalt</h2>
                             <UpdateZuordnung
                                 items={songs.map(s => ({ id: s.song_id, label: s.title, meta: s.composer }))}
                                 initialIds={sammlung.songs.map(s => s.song_id)}
@@ -162,64 +135,41 @@ export default function SammlungDetails() {
                             />
                         </div>
 
-                        {songCount > 0 ? (
-                            <>
-                                <div className="search">
-                                    <input
-                                        type="text"
-                                        className="search__input"
-                                        placeholder="Suche nach Songtitel oder Komponist"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
-                                    {searchTerm && (
-                                        <button type="button" className="search__clear" onClick={() => setSearchTerm('')} aria-label="Suche löschen">×</button>
-                                    )}
-                                </div>
+                        {songCount >= SUCHE_AB && (
+                            <SearchField
+                                value={searchTerm}
+                                onChange={setSearchTerm}
+                                placeholder="In dieser Sammlung suchen"
+                                label="In dieser Sammlung suchen"
+                            />
+                        )}
 
-                                <ul className="item-list">
-                                    {filteredSongs.map(song => (
-                                        <li key={song.song_id} className="item">
-                                            <Link to={`/songs/${song.song_id}`} className="item__link">
-                                                <div className="item__info">
-                                                    <span className="item__title">{song.title}</span>
-                                                    {song.composer && <span className="item__subtitle">{song.composer}</span>}
-                                                </div>
-                                            </Link>
-                                            <div className="item__actions">
-                                                <UpdateDialogue
-                                                    fields={songFields}
-                                                    initialValues={song}
-                                                    onSave={(values) => handleUpdateSong(song.song_id, values)}
-                                                    label={`„${song.title}“ bearbeiten`}
-                                                />
-                                                <button
-                                                    type="button"
-                                                    className="btn btn--secondary"
-                                                    onClick={() => handleRemoveSong(song.song_id)}
-                                                    title="Nur aus dieser Sammlung entfernen"
-                                                >
-                                                    Entfernen
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="btn btn--danger btn--icon"
-                                                    onClick={() => handleDeleteSong(song.song_id)}
-                                                    aria-label={`„${song.title}“ komplett löschen`}
-                                                    title="Song komplett löschen (auch aus allen anderen Sammlungen)"
-                                                >
-                                                    <TrashIcon />
-                                                </button>
-                                            </div>
-                                        </li>
-                                    ))}
-                                    {filteredSongs.length === 0 && (
-                                        <li className="item item--empty">Kein Song gefunden.</li>
-                                    )}
-                                </ul>
-                            </>
+                        {songCount > 0 ? (
+                            <ul className="inhalt">
+                                {filteredSongs.map(song => (
+                                    <li key={song.song_id} className="inhalt__zeile">
+                                        <Link to={`/songs/${song.song_id}`} className="inhalt__link">
+                                            <span className="inhalt__titel">{song.title}</span>
+                                            <span className="inhalt__punkte" aria-hidden="true" />
+                                            {song.composer && <span className="inhalt__komponist">{song.composer}</span>}
+                                        </Link>
+                                        <button
+                                            type="button"
+                                            className="btn btn--ghost btn--icon inhalt__entfernen"
+                                            onClick={() => handleRemoveSong(song.song_id)}
+                                            aria-label={`„${song.title}“ aus der Sammlung nehmen`}
+                                            title="Aus der Sammlung nehmen (der Song bleibt erhalten)"
+                                        >
+                                            <CloseIcon size={16} />
+                                        </button>
+                                    </li>
+                                ))}
+                                {filteredSongs.length === 0 && (
+                                    <li className="leer">Kein Song passt zu „{searchTerm.trim()}“.</li>
+                                )}
+                            </ul>
                         ) : (
-                            <p className="detail__empty">In dieser Sammlung sind noch keine Songs.</p>
+                            <p className="leer">Diese Sammlung ist noch leer. Über „Songs zuordnen“ fügst du Songs hinzu.</p>
                         )}
                     </section>
                 </>

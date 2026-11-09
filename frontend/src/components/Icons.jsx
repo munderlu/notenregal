@@ -62,3 +62,38 @@ export function UploadIcon(props) {
         </Icon>
     );
 }
+
+export function PlusIcon(props) {
+    return (
+        <Icon {...props}>
+            <path d="M12 5v14" />
+            <path d="M5 12h14" />
+        </Icon>
+    );
+}
+
+export function CloseIcon(props) {
+    return (
+        <Icon {...props}>
+            <path d="M18 6 6 18" />
+            <path d="M6 6l12 12" />
+        </Icon>
+    );
+}
+
+export function ChevronLeftIcon(props) {
+    return (
+        <Icon {...props}>
+            <path d="M15 18l-6-6 6-6" />
+        </Icon>
+    );
+}
+
+export function SearchIcon(props) {
+    return (
+        <Icon {...props}>
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-3.5-3.5" />
+        </Icon>
+    );
+}

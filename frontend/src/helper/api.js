@@ -69,9 +69,6 @@ export async function addSong(values) {
 
 export async function deleteSong(song_id) {
     try {
-        const confirmed = window.confirm('Möchten Sie diesen Song wirklich löschen?');
-        if (!confirmed) return 0;
-
         const response = await fetch(`/api/songs/${song_id}`, {
             method: 'DELETE',
         });
@@ -144,9 +141,6 @@ export async function addSammlung(values) {
 
 export async function deleteSammlung(sammlung_id) {
     try {
-        const confirmed = window.confirm('Möchten Sie diese Sammlung wirklich löschen?');
-        if (!confirmed) return 0;
-
         const response = await fetch(`/api/sammlungen/${sammlung_id}`, {
             method: 'DELETE',
         });
@@ -271,9 +265,6 @@ export async function updateNoten(noten_id, values) {
 
 export async function deleteNoten(noten_id) {
     try {
-        const confirmed = window.confirm('Möchten Sie diese Noten wirklich löschen?');
-        if (!confirmed) return 0;
-
         const response = await fetch(`/api/noten/${noten_id}`, {
             method: 'DELETE',
         });

@@ -1,26 +1,27 @@
-/* ===== Header ===== */
+/* ===== Kopfzeile ===== */
 .site-header {
-    background: var(--color-header-bg);
-    color: var(--color-header-text);
+    background: var(--header-bg);
+    color: var(--header-text);
 }
 
 .site-header__inner {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
     gap: var(--space-4);
     max-width: var(--content-width);
     margin: 0 auto;
-    padding: var(--space-3) var(--space-4);
+    padding: 0 var(--space-4);
 }
 
 .brand {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    white-space: nowrap;
+    padding: var(--space-3) 0;
     font-size: 1.35rem;
     font-weight: 800;
+    white-space: nowrap;
 }
 
 .brand__icon {
@@ -30,36 +31,46 @@
 
 .main-nav ul {
     display: flex;
-    gap: var(--space-1);
+    height: 100%;
+    gap: var(--space-5);
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
 .main-nav a {
-    display: block;
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius);
-    color: var(--color-header-muted);
+    display: flex;
+    align-items: center;
+    height: 100%;
+    border-bottom: 3px solid transparent;
+    color: var(--header-muted);
     font-weight: 600;
-    transition: background-color 0.15s, color 0.15s;
 }
 
 .main-nav a:hover {
-    background: var(--color-nav-hover-bg);
-    color: var(--color-header-text);
+    color: var(--header-text);
 }
 
 .main-nav a.active {
-    background: var(--color-nav-active-bg);
-    color: var(--color-nav-active-text);
+    border-bottom-color: var(--header-text);
+    color: var(--header-text);
+}
+
+/* Nur für Screenreader sichtbar */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
 }
 
 /* ===== Seitenlayout ===== */
 .page {
     max-width: var(--content-width);
     margin: 0 auto;
-    padding: var(--space-6) var(--space-4);
+    padding: var(--space-6) var(--space-4) var(--space-7);
 }
 
 .page-stack {
@@ -68,264 +79,471 @@
     gap: var(--space-5);
 }
 
+.page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
+}
+
 .page-title {
-    font-size: 2rem;
+    font-size: 2.75rem;
     font-weight: 800;
 }
 
-.section-title {
-    margin-bottom: var(--space-3);
-    font-size: 1rem;
+.page-count {
+    color: var(--graphite);
 }
 
-/* ===== Hinzufügen-Formular ===== */
-.card {
-    padding: var(--space-4);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+.toolbar {
+    display: flex;
+    gap: var(--space-3);
 }
 
-.card__title {
-    margin-bottom: var(--space-3);
-    font-size: 1rem;
+.toolbar .search {
+    flex: 1;
 }
 
-.add-form {
+.section-head {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2);
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--rule-strong);
 }
 
-.add-form input {
-    flex: 1 1 180px;
+.section-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.section-count {
+    margin-left: var(--space-1);
+    color: var(--graphite);
+    font-weight: 400;
+}
+
+.leer {
+    padding: var(--space-4) 0;
+    color: var(--graphite);
+}
+
+.textlink {
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+.textlink:hover {
+    color: var(--accent-hover);
+    text-decoration-thickness: 2px;
 }
 
 /* ===== Buttons ===== */
 .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
     padding: var(--space-2) var(--space-4);
     border: 1px solid transparent;
     border-radius: var(--radius);
     background: transparent;
     font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 500;
     white-space: nowrap;
     cursor: pointer;
+    transition: background-color 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.btn:disabled {
+    opacity: 0.55;
+    cursor: progress;
 }
 
 .btn--primary {
-    background: var(--color-primary);
-    color: var(--color-primary-contrast);
+    background: var(--accent);
+    color: var(--accent-ink);
 }
 
-.btn--primary:hover {
-    background: var(--color-primary-hover);
+.btn--primary:hover:not(:disabled) {
+    background: var(--accent-hover);
 }
 
 .btn--secondary {
-    border-color: var(--color-border);
-    background: var(--color-surface);
+    border-color: var(--rule);
+    background: var(--surface);
 }
 
-.btn--secondary:hover {
-    border-color: var(--color-text-muted);
+.btn--secondary:hover:not(:disabled) {
+    border-color: var(--graphite);
+}
+
+.btn--ghost {
+    color: var(--graphite);
+}
+
+.btn--ghost:hover {
+    background: var(--hover);
+    color: var(--ink);
 }
 
 .btn--danger {
-    color: var(--color-danger);
+    padding-inline: 0;
+    color: var(--danger);
 }
 
 .btn--danger:hover {
     text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
-/* Kleinere Buttons in den Listenzeilen */
-.item__actions .btn {
-    padding: var(--space-1) var(--space-3);
-    font-size: 0.875rem;
+.btn--danger-solid {
+    background: var(--danger);
+    color: var(--surface);
 }
 
-/* Icon-Buttons (Stift, Papierkorb) */
+.btn--danger-solid:hover:not(:disabled) {
+    filter: brightness(0.92);
+}
+
+.btn.btn--icon {
+    width: 2.5rem;
+    padding: 0;
+}
+
+.btn--with-icon {
+    gap: var(--space-2);
+    padding-inline: var(--space-3) var(--space-4);
+}
+
 .icon {
     display: block;
     flex-shrink: 0;
 }
 
-.btn.btn--icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    padding: 0;
+a.btn {
+    color: var(--graphite);
 }
 
-.btn--danger.btn--icon:hover {
-    border-color: var(--color-danger);
-    background: var(--color-danger-bg);
-    text-decoration: none;
+a.btn:hover {
+    color: var(--ink);
 }
 
-/* Icon + Text nebeneinander */
-.btn--with-icon {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-}
-
-/* ===== Fehlermeldung ===== */
+/* ===== Meldungen ===== */
 .alert {
-    margin-bottom: var(--space-3);
     padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--color-danger);
-    border-radius: var(--radius);
-    background: var(--color-danger-bg);
-    color: var(--color-danger);
+    border-left: 3px solid var(--danger);
+    background: var(--danger-bg);
+    color: var(--danger);
 }
 
 /* ===== Suche ===== */
 .search {
     position: relative;
-    margin-bottom: var(--space-3);
+    display: flex;
+    align-items: center;
+}
+
+.search > .icon {
+    position: absolute;
+    left: var(--space-3);
+    color: var(--graphite);
+    pointer-events: none;
 }
 
 .search .search__input {
-    padding-right: 2.25rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+}
+
+/* Browser-eigenes ✕ ausblenden, wir haben ein eigenes */
+.search__input::-webkit-search-cancel-button {
+    display: none;
 }
 
 .search__clear {
     position: absolute;
-    top: 50%;
-    right: var(--space-2);
-    transform: translateY(-50%);
+    right: var(--space-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 2rem;
     height: 2rem;
     padding: 0;
     border: none;
+    border-radius: var(--radius);
     background: transparent;
-    color: var(--color-text-muted);
-    font-size: 1.2rem;
-    line-height: 1;
+    color: var(--graphite);
     cursor: pointer;
 }
 
 .search__clear:hover {
-    color: var(--color-text);
+    background: var(--hover);
+    color: var(--ink);
 }
 
-/* ===== Listen ===== */
-.item-list {
+.search--gross .search__input {
+    min-height: 3.5rem;
+    padding-left: 3rem;
+    font-size: 1.125rem;
+}
+
+.search--gross > .icon {
+    left: var(--space-4);
+}
+
+/* ===== Register (Songliste, A–Z) ===== */
+.register {
+    display: flex;
+    flex-direction: column;
+}
+
+.register__gruppe {
+    display: grid;
+    grid-template-columns: 3.5rem 1fr;
+    border-top: 1px solid var(--rule-strong);
+}
+
+.register__buchstabe {
+    padding-top: 0.6rem;
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.register__liste,
+.treffer {
     margin: 0;
     padding: 0;
     list-style: none;
-    border-top: 2px solid var(--color-primary);
 }
 
-.item {
+.register__liste li + li {
+    border-top: 1px solid var(--rule);
+}
+
+.register__eintrag {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
-    gap: var(--space-4);
+    gap: var(--space-2) var(--space-4);
     padding: var(--space-3) var(--space-2);
-    border-bottom: 1px solid var(--color-border);
 }
 
-.item:hover {
-    background: var(--color-surface-hover);
+.register__eintrag:hover {
+    background: var(--hover);
 }
 
-@media (hover: none) {
-    .item:hover {
-        background: transparent;
-    }
-}
-
-.item__info {
+.register__titel {
     min-width: 0;
-}
-
-/* Verlinkter Eintrag: ganze Zeilenbreite klickbar */
-.item__link {
-    flex: 1;
-    min-width: 0;
-    align-self: stretch;
-    display: flex;
-    align-items: center;
-}
-
-.item__link:hover .item__title {
-    color: var(--color-primary);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-}
-
-.item__title {
+    font-size: 1.15rem;
     font-weight: 600;
     overflow-wrap: anywhere;
 }
 
-.item__subtitle {
-    display: block;
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-}
-
-.item--empty {
-    justify-content: center;
-    color: var(--color-text-muted);
-    font-style: italic;
-}
-
-.item__actions {
-    display: flex;
+.register__komponist {
     flex-shrink: 0;
-    gap: var(--space-1);
+    max-width: 45%;
+    color: var(--graphite);
+    font-size: 0.925rem;
+    text-align: right;
 }
 
-/* ===== Bearbeiten-Dialog ===== */
-.dialog {
-    width: min(400px, calc(100vw - 2rem));
-    padding: var(--space-5);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    color: var(--color-text);
-}
-
-.dialog::backdrop {
-    background: rgba(10, 18, 30, 0.5);
-}
-
-.dialog__title {
-    margin-bottom: var(--space-4);
-    font-size: 1.3rem;
-}
-
-.dialog__form {
+/* ===== Startseite ===== */
+.start {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-7);
 }
 
-.form-field label {
-    display: block;
-    margin-bottom: var(--space-1);
-    font-size: 0.875rem;
-    font-weight: 600;
-}
-
-.dialog__actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: var(--space-2);
-    margin-top: var(--space-2);
-}
-
-/* ===== Detailansicht ===== */
-.detail {
+.start__suche {
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
+}
+
+/* Zitat über der Suche: große Anführungszeichen hängen links in den Rand */
+.zitat {
+    margin: 0 0 var(--space-3);
+}
+
+.zitat__text {
+    margin: 0;
+}
+
+.zitat__text p {
+    position: relative;
+    max-width: 22ch;
+    font-size: clamp(2rem, 5.5vw, 3.25rem);
+    font-weight: 800;
+    line-height: 1.12;
+    text-wrap: balance;
+}
+
+.zitat__text p::before {
+    content: "„";
+    position: absolute;
+    right: 100%;
+    margin-right: 0.08em;
+    color: var(--accent);
+}
+
+.zitat__text p::after {
+    content: "“";
+    color: var(--accent);
+}
+
+.zitat__quelle {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+    color: var(--graphite);
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+/* Lange Zitate kleiner setzen, damit sie nicht die halbe Seite füllen */
+.zitat--lang .zitat__text p {
+    max-width: 34ch;
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.zitat__werk {
+    font-weight: 400;
+}
+
+/* kurzer Strich vor dem Namen */
+.zitat__quelle::before {
+    content: "";
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2px;
+    margin-top: 0.75em;
+    background: currentColor;
+}
+
+/* Am Handy ist links kein Rand frei: Anführungszeichen normal im Text */
+@media (max-width: 600px) {
+    .zitat__text p::before {
+        position: static;
+        margin-right: 0;
+    }
+}
+
+.treffer {
+    border-top: 1px solid var(--rule-strong);
+}
+
+.treffer li {
+    border-bottom: 1px solid var(--rule);
+}
+
+.treffer .leer {
+    padding-inline: var(--space-2);
+}
+
+.treffer__mehr {
+    padding: var(--space-3) var(--space-2);
+}
+
+.start__regal {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+/* ===== Regal mit Buchrücken =====
+ * Jede Reihe ist genau --fach hoch; die Regalbretter liegen als
+ * Hintergrund über die volle Breite, egal wie viele Bücher in einer Reihe stehen.
+ */
+.regal {
+    --fach: 16rem;
+    --brett: 0.6rem;
+
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0 var(--space-3);
+    list-style: none;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0 calc(var(--fach) - var(--brett)),
+        var(--shelf) calc(var(--fach) - var(--brett)) calc(var(--fach) - 2px),
+        var(--shelf-edge) calc(var(--fach) - 2px) var(--fach)
+    );
+}
+
+.regal__fach {
+    display: flex;
+    align-items: flex-end;
+    height: var(--fach);
+    padding: var(--space-5) 1px var(--brett);
+}
+
+.regal__fach--rest {
+    flex: 1;
+}
+
+.buchruecken {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--breite, 3.25rem);
+    height: var(--hoehe, 100%);
+    padding: 1.5rem 0.3rem;
+    border-radius: 2px 2px 0 0;
+    background:
+        linear-gradient(to bottom,
+            transparent 0.6rem,
+            rgba(240, 215, 160, 0.55) 0.6rem 0.7rem,
+            transparent 0.7rem 0.85rem,
+            rgba(240, 215, 160, 0.55) 0.85rem 0.95rem,
+            transparent 0.95rem),
+        var(--einband);
+    box-shadow:
+        inset 3px 0 0 rgba(255, 255, 255, 0.07),
+        inset -4px 0 0 rgba(0, 0, 0, 0.2);
+    color: var(--spine-ink);
+    transition: transform 0.15s ease-out;
+}
+
+.buchruecken:hover,
+.buchruecken:focus-visible {
+    transform: translateY(-0.4rem);
+}
+
+/* Lange Namen dürfen auf zwei Zeilen umbrechen, erst danach wird gekürzt */
+.buchruecken__titel {
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    max-width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.15;
+    text-align: center;
+    text-wrap: balance;
+    hyphens: auto;
+    overflow-wrap: anywhere;
+}
+
+/* ===== Detailseiten ===== */
+.detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
 }
 
 .back-link {
@@ -333,22 +551,17 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-1);
-    color: var(--color-text-muted);
+    margin-bottom: calc(var(--space-6) * -1 + var(--space-3));
+    margin-left: -0.3rem;
+    color: var(--graphite);
     font-size: 0.95rem;
-    font-weight: 600;
-    transition: color 0.15s;
+    font-weight: 500;
 }
 
 .back-link:hover {
-    color: var(--color-primary);
+    color: var(--ink);
 }
 
-.detail__header {
-    padding-bottom: var(--space-4);
-    border-bottom: 2px solid var(--color-primary);
-}
-
-/* Titel links, „Bearbeiten“-Button rechts */
 .detail__header {
     display: flex;
     flex-wrap: wrap;
@@ -358,55 +571,94 @@
 }
 
 .detail__header-text {
-    flex: 1 1 260px;
+    flex: 1 1 280px;
     min-width: 0;
 }
 
-.detail__header .page-title {
+.detail__title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
     overflow-wrap: anywhere;
 }
 
 .detail__subtitle {
-    margin-top: var(--space-1);
-    color: var(--color-text-muted);
+    margin-top: var(--space-2);
+    color: var(--graphite);
     font-size: 1.1rem;
 }
 
-.detail .alert {
-    margin-bottom: 0;
+/* Sammlung: farbiger Rücken links neben dem Titel */
+.detail__header--einband .detail__header-text {
+    padding-left: var(--space-4);
+    border-left: 0.6rem solid var(--einband);
 }
 
-/* Eigener Abschnitt unterhalb des Kopfbereichs (z. B. Sammlungen) */
 .detail__section {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
 }
 
-.detail__section-header {
+/* ===== Noten eines Songs ===== */
+.noten {
+    margin: calc(var(--space-3) * -1) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.noten__zeile {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--space-2) var(--space-4);
+    gap: var(--space-2);
+    border-bottom: 1px solid var(--rule);
 }
 
-.detail__section-header .section-title {
-    margin-bottom: 0;
+.noten__link {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-2);
 }
 
-/* Nur den Öffnen-Button verkleinern, nicht die Buttons im Dialog */
-.detail__section-header > .UpdateDialogue > .btn {
-    padding: var(--space-1) var(--space-3);
-    font-size: 0.875rem;
+.noten__link:hover {
+    background: var(--hover);
 }
 
-.detail__empty {
-    color: var(--color-text-muted);
-    font-style: italic;
+.noten__link:hover .noten__instrument {
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
-/* Sammlungen als klickbare „Chips“ */
+/* Kleines Notenblatt: fünf Linien auf Papier */
+.noten__blatt {
+    flex-shrink: 0;
+    width: 1.4rem;
+    height: 1.8rem;
+    border: 1px solid var(--graphite);
+    border-radius: 1px;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            var(--graphite) 0 1px,
+            transparent 1px 3px
+        ) center 0.45rem / 70% 9px no-repeat,
+        var(--surface);
+}
+
+.noten__instrument {
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+.noten__aktionen {
+    display: flex;
+    flex-shrink: 0;
+    gap: var(--space-1);
+}
+
+/* ===== Sammlungen eines Songs ===== */
 .chip-list {
     display: flex;
     flex-wrap: wrap;
@@ -417,50 +669,212 @@
 }
 
 .chip {
-    display: inline-block;
-    padding: var(--space-1) var(--space-3);
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
-    background: var(--color-surface);
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3) var(--space-1) var(--space-2);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--surface);
+    font-weight: 500;
     overflow-wrap: anywhere;
-    transition: border-color 0.15s, color 0.15s;
+}
+
+.chip::before {
+    content: "";
+    flex-shrink: 0;
+    width: 0.4rem;
+    height: 1.1rem;
+    border-radius: 1px;
+    background: var(--einband);
 }
 
 .chip:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    border-color: var(--graphite);
 }
 
-/* ===== Sammlungen-Dialog (Checkbox-Liste) ===== */
+/* ===== Inhaltsverzeichnis einer Sammlung ===== */
+.inhalt {
+    margin: calc(var(--space-3) * -1) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.inhalt__zeile {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    border-bottom: 1px solid var(--rule);
+}
+
+.inhalt__link {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    padding: var(--space-3) var(--space-2);
+}
+
+.inhalt__link:hover {
+    background: var(--hover);
+}
+
+.inhalt__titel {
+    min-width: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.inhalt__punkte {
+    flex: 1;
+    min-width: var(--space-4);
+    margin: 0 var(--space-2);
+    border-bottom: 2px dotted var(--rule);
+    transform: translateY(-0.3em);
+}
+
+.inhalt__komponist {
+    flex-shrink: 0;
+    max-width: 40%;
+    color: var(--graphite);
+    font-size: 0.925rem;
+    text-align: right;
+}
+
+/* Entfernen-Knopf erst beim Überfahren deutlich zeigen */
+@media (hover: hover) {
+    .inhalt__entfernen {
+        opacity: 0.35;
+    }
+
+    .inhalt__zeile:hover .inhalt__entfernen,
+    .inhalt__entfernen:focus-visible {
+        opacity: 1;
+    }
+}
+
+/* ===== Dialoge ===== */
+.dialog {
+    width: min(26rem, calc(100vw - 2rem));
+    padding: var(--space-5);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.35);
+}
+
+.dialog::backdrop {
+    background: var(--backdrop);
+}
+
+.dialog[open] {
+    animation: dialog-auf 0.16s ease-out;
+}
+
+@keyframes dialog-auf {
+    from {
+        opacity: 0;
+        transform: translateY(0.5rem);
+    }
+}
+
+.dialog__title {
+    margin-bottom: var(--space-4);
+    font-size: 1.6rem;
+    font-weight: 750;
+}
+
+.dialog > .search {
+    margin-bottom: var(--space-3);
+}
+
+.dialog__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: var(--space-1);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.form-field__optional {
+    color: var(--graphite);
+    font-weight: 400;
+}
+
+.dialog__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-2);
+}
+
+.dialog > .dialog__actions {
+    margin-top: var(--space-4);
+}
+
+.dialog__status {
+    color: var(--graphite);
+    font-size: 0.9rem;
+}
+
+/* Löschen-Bereich unten im Bearbeiten-Dialog */
+.dialog__danger {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--rule);
+}
+
+.dialog__danger .btn--danger {
+    align-self: flex-start;
+    min-height: 2rem;
+}
+
+.dialog__danger p {
+    color: var(--danger);
+    font-size: 0.95rem;
+}
+
+.dialog__danger-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-2);
+}
+
+/* ===== Zuordnungs-Dialog (Checkbox-Liste) ===== */
 .checkbox-list {
-    max-height: 220px;
+    max-height: 16rem;
     overflow-y: auto;
     margin: 0;
     padding: 0;
     list-style: none;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--rule);
     border-radius: var(--radius);
 }
 
-.checkbox-item {
-    border-bottom: 1px solid var(--color-border);
-}
-
-.checkbox-item:last-child {
-    border-bottom: none;
+.checkbox-item + .checkbox-item {
+    border-top: 1px solid var(--rule);
 }
 
 .checkbox-item label {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-3);
+    min-height: 2.75rem;
     padding: var(--space-2) var(--space-3);
     cursor: pointer;
 }
 
 .checkbox-item label:hover {
-    background: var(--color-surface-hover);
+    background: var(--hover);
 }
 
 .checkbox-item input[type="checkbox"] {
@@ -468,7 +882,7 @@
     width: 1.1rem;
     height: 1.1rem;
     margin: 0;
-    accent-color: var(--color-primary);
+    accent-color: var(--accent);
     cursor: pointer;
 }
 
@@ -476,240 +890,43 @@
     overflow-wrap: anywhere;
 }
 
-/* Komponist unter dem Songtitel in der Checkbox-Liste */
 .checkbox-item__meta {
     display: block;
-    color: var(--color-text-muted);
+    color: var(--graphite);
     font-size: 0.85rem;
 }
 
-/* Hinweis bei leerer Liste / keinem Suchtreffer */
 .checkbox-item--empty {
     padding: var(--space-3);
-    color: var(--color-text-muted);
-    font-style: italic;
-    text-align: center;
+    color: var(--graphite);
 }
 
-/* Eintrag „… als neue Sammlung anlegen“ am Ende der Liste */
 .checkbox-item__create {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     width: 100%;
+    min-height: 2.75rem;
     padding: var(--space-2) var(--space-3);
     border: none;
     background: transparent;
-    color: var(--color-primary);
-    font-weight: 600;
+    color: var(--accent);
+    font-weight: 500;
     text-align: left;
     overflow-wrap: anywhere;
     cursor: pointer;
 }
 
 .checkbox-item__create:hover {
-    background: var(--color-surface-hover);
+    background: var(--hover);
 }
 
 .checkbox-item__create:disabled {
-    color: var(--color-text-muted);
+    color: var(--graphite);
     cursor: progress;
 }
 
-/* Aktions-Buttons ganz unten, abgesetzt durch eine Linie */
-.dialog > .dialog__actions {
-    margin-top: var(--space-4);
-    padding-top: var(--space-4);
-    border-top: 1px solid var(--color-border);
-}
-
-/* ===== Startseite ===== */
-.start {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 75vh;
-    text-align: center;
-}
-
-.start__icon {
-    font-size: 4.5rem;
-    line-height: 1;
-    color: var(--color-primary);
-}
-
-.start__title {
-    margin-top: var(--space-3);
-    font-size: 2.5rem;
-    font-weight: 800;
-}
-
-.start__subtitle {
-    margin-top: var(--space-1);
-    color: var(--color-text-muted);
-}
-
-.start__links {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    width: min(320px, 100%);
-    margin-top: var(--space-6);
-}
-
-.start-link {
-    padding: var(--space-4);
-    border-radius: var(--radius-lg);
-    background: var(--color-primary);
-    color: var(--color-primary-contrast);
-    font-size: 1.2rem;
-    font-weight: 700;
-    transition: background-color 0.15s;
-}
-
-.start-link:hover {
-    background: var(--color-primary-hover);
-}
-
-/* ===== Handy ===== */
-@media (max-width: 560px) {
-    .site-header__inner {
-        flex-wrap: wrap;
-        column-gap: var(--space-2);
-        row-gap: var(--space-2);
-        padding: var(--space-2) var(--space-3);
-    }
-
-    .brand {
-        gap: var(--space-1);
-        font-size: 1.15rem;
-    }
-
-    .brand__icon {
-        font-size: 1.4rem;
-    }
-
-    .main-nav a {
-        padding: var(--space-2) 0.6rem;
-        font-size: 0.95rem;
-    }
-
-
-    .page {
-        padding: var(--space-5) var(--space-4);
-    }
-
-    .page-title {
-        font-size: 1.5rem;
-    }
-
-    .card {
-        padding: var(--space-3);
-    }
-
-    .add-form {
-        flex-direction: column;
-    }
-
-    .add-form input {
-        flex: none;
-    }
-
-    /* Mindestens 44px hohe Tippflächen */
-    .btn {
-        min-height: 2.75rem;
-    }
-
-    .search .search__input {
-        min-height: 2.75rem;
-        padding-right: 2.75rem;
-    }
-
-    .search__clear {
-        right: 0;
-        width: 2.75rem;
-        height: 2.75rem;
-    }
-
-    .add-form input,
-    .form-field input {
-        min-height: 2.75rem;
-    }
-
-    .item {
-        gap: var(--space-3);
-        padding: var(--space-2) 0;
-    }
-
-    .item__actions .btn {
-        padding: var(--space-2) var(--space-3);
-        font-size: 0.9rem;
-    }
-
-    .item__actions .btn--danger {
-        padding: var(--space-2);
-    }
-
-    /* Icon-Buttons: 44px Tippfläche */
-    .btn.btn--icon {
-        width: 2.75rem;
-        height: 2.75rem;
-        padding: 0;
-    }
-
-    /* Drei Buttons (Sammlung-Detail): bei Platzmangel umbrechen */
-    .item__actions {
-        flex-wrap: wrap;
-        justify-content: flex-end;
-    }
-
-    .dialog {
-        padding: var(--space-4);
-    }
-
-    .back-link {
-        min-height: 2.75rem;
-    }
-
-    .detail__subtitle {
-        font-size: 1rem;
-    }
-
-    .chip {
-        padding: var(--space-2) var(--space-3);
-    }
-
-    .dialog__actions .btn {
-        flex: 1;
-    }
-
-    .checkbox-list {
-        max-height: 45vh;
-    }
-
-    .checkbox-item label,
-    .checkbox-item__create {
-        min-height: 2.75rem;
-    }
-
-    .checkbox-item input[type="checkbox"] {
-        width: 1.25rem;
-        height: 1.25rem;
-    }
-}
-
-/* ===== Noten-Upload ===== */
-.dialog__status {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-}
-
-/* Links, die wie Buttons aussehen (z. B. Download) */
-a.btn {
-    color: inherit;
-    text-decoration: none;
-}
-
-/* Eigene Darstellung für <input type="file"> – lange Dateinamen werden mit „…“ gekürzt */
+/* ===== Datei-Auswahl (Noten hochladen) ===== */
 .file-input {
     position: relative;
 }
@@ -729,22 +946,23 @@ a.btn {
     min-width: 0;
     margin-bottom: 0;
     padding: var(--space-1);
-    border: 1px solid var(--color-border);
+    border: 1px dashed var(--graphite);
     border-radius: var(--radius);
-    background: var(--color-surface);
+    background: var(--paper);
     font-size: 0.95rem;
-    font-weight: normal;
+    font-weight: 400;
     cursor: pointer;
 }
 
 .file-input__button {
     flex-shrink: 0;
+    min-height: 2rem;
     padding: var(--space-1) var(--space-3);
     font-size: 0.875rem;
 }
 
 .file-input__box:hover .file-input__button {
-    border-color: var(--color-text-muted);
+    border-color: var(--graphite);
 }
 
 .file-input__name {
@@ -753,15 +971,114 @@ a.btn {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: var(--color-text-muted);
+    color: var(--graphite);
 }
 
 .file-input__native:focus-visible + .file-input__box {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px var(--color-focus);
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
 }
 
 .file-input__native:disabled + .file-input__box {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* ===== Handy ===== */
+@media (max-width: 600px) {
+    .site-header__inner {
+        padding: 0 var(--space-4);
+    }
+
+    .brand {
+        gap: var(--space-1);
+        font-size: 1.15rem;
+    }
+
+    .brand__icon {
+        font-size: 1.4rem;
+    }
+
+    .main-nav ul {
+        gap: var(--space-4);
+    }
+
+    .page {
+        padding: var(--space-5) var(--space-4) var(--space-6);
+    }
+
+    .page-title {
+        font-size: 2.25rem;
+    }
+
+    .start {
+        gap: var(--space-6);
+    }
+
+    /* Suche über die volle Breite, Anlegen-Button darunter */
+    .toolbar {
+        flex-direction: column;
+    }
+
+    .toolbar .btn {
+        width: 100%;
+    }
+
+    /* 44px Tippflächen */
+    .btn,
+    .btn.btn--icon,
+    input[type="text"],
+    input[type="search"] {
+        min-height: 2.75rem;
+    }
+
+    .btn.btn--icon {
+        width: 2.75rem;
+    }
+
+    .search__clear {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .register__gruppe {
+        grid-template-columns: 2.25rem 1fr;
+    }
+
+    .register__eintrag {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .register__komponist {
+        max-width: none;
+        text-align: left;
+    }
+
+    .regal {
+        --fach: 14rem;
+        padding: 0 var(--space-2);
+    }
+
+    .inhalt__punkte {
+        display: none;
+    }
+
+    .inhalt__link {
+        flex-direction: column;
+    }
+
+    .inhalt__komponist {
+        max-width: none;
+        text-align: left;
+    }
+
+    .dialog {
+        padding: var(--space-4);
+    }
+
+    .dialog__actions .btn,
+    .dialog__danger-actions .btn {
+        flex: 1;
+    }
 }

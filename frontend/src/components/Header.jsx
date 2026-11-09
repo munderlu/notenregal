@@ -1,11 +1,6 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 export default function Header() {
-    const { pathname } = useLocation();
-
-    // Auf der Startseite gibt es keinen Header
-    if (pathname === '/') return null;
-
     return (
         <header className="site-header">
             <div className="site-header__inner">
@@ -13,7 +8,7 @@ export default function Header() {
                     <span className="brand__icon" aria-hidden="true">𝄞</span>
                     Notenregal
                 </NavLink>
-                <nav className="main-nav">
+                <nav className="main-nav" aria-label="Hauptnavigation">
                     <ul>
                         <li><NavLink to="/songs">Songs</NavLink></li>
                         <li><NavLink to="/sammlungen">Sammlungen</NavLink></li>

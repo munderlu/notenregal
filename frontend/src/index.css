@@ -1,30 +1,42 @@
-/* ===== Design-Tokens ===== */
+/* ===== Design-Tokens =====
+ * Papier und Tinte mit blauem Akzent.
+ * Die Einbandfarben (--spine-*) färben die Buchrücken im Regal.
+ */
 :root {
-    color-scheme: light dark;
+    color-scheme: light;
 
-    --color-bg: #f5f5f2;
-    --color-surface: #ffffff;
-    --color-surface-hover: #f0f2f5;
-    --color-border: #d9dbde;
-    --color-text: #1c2430;
-    --color-text-muted: #5d6673;
-    --color-primary: #1f3a5f;
-    --color-primary-hover: #172c48;
-    --color-primary-contrast: #ffffff;
-    --color-header-bg: #1f3a5f;
-    --color-header-text: #ffffff;
-    --color-header-muted: #c3cfdf;
-    --color-nav-hover-bg: rgba(255, 255, 255, 0.1);
-    --color-nav-active-bg: #ffffff;
-    --color-nav-active-text: #1f3a5f;
-    --color-danger: #a33a32;
-    --color-danger-bg: #f8eceb;
-    --color-focus: rgba(31, 58, 95, 0.3);
+    --paper: #f6f6f3;
+    --surface: #ffffff;
+    --ink: #1c1f22;
+    --graphite: #61666b;
+    --rule: #dcddd8;
+    --rule-strong: #1c1f22;
+    --hover: #ecede8;
+    --accent: #1f3a5f;
+    --accent-hover: #172c48;
+    --accent-ink: #ffffff;
+    --header-bg: #1f3a5f;
+    --header-text: #ffffff;
+    --header-muted: #c3cfdf;
+    --danger: #a8322a;
+    --danger-bg: #f7e9e7;
+    --focus: #1f3a5f;
+    --backdrop: rgba(20, 24, 26, 0.45);
 
-    --font: "Nunito Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --shelf: #6b5a48;
+    --shelf-edge: #4e4135;
 
-    --radius: 8px;
-    --radius-lg: 14px;
+    --spine-1: #1f5c4a;
+    --spine-2: #7b2d35;
+    --spine-3: #2b4a73;
+    --spine-4: #a8742a;
+    --spine-5: #4a4f55;
+    --spine-6: #5e3f6e;
+    --spine-ink: #f6f3ea;
+
+    --font-sans: "Nunito Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+    --radius: 6px;
 
     --space-1: 0.25rem;
     --space-2: 0.5rem;
@@ -32,30 +44,42 @@
     --space-4: 1rem;
     --space-5: 1.5rem;
     --space-6: 2.5rem;
+    --space-7: 4rem;
 
-    --content-width: 760px;
+    --content-width: 880px;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --color-bg: #11161d;
-        --color-surface: #171d26;
-        --color-surface-hover: #1e2631;
-        --color-border: #2c3542;
-        --color-text: #e3e7ec;
-        --color-text-muted: #95a0ae;
-        --color-primary: #7fa3d1;
-        --color-primary-hover: #9bb8dd;
-        --color-primary-contrast: #11161d;
-        --color-header-bg: #0c1a2d;
-        --color-header-text: #e3e7ec;
-        --color-header-muted: #8496ad;
-        --color-nav-hover-bg: rgba(255, 255, 255, 0.08);
-        --color-nav-active-bg: #7fa3d1;
-        --color-nav-active-text: #0c1a2d;
-        --color-danger: #e08a82;
-        --color-danger-bg: #2f1d1c;
-        --color-focus: rgba(127, 163, 209, 0.35);
+        color-scheme: dark;
+
+        --paper: #151819;
+        --surface: #1d2123;
+        --ink: #e7e8e4;
+        --graphite: #9a9f9e;
+        --rule: #30363a;
+        --rule-strong: #e7e8e4;
+        --hover: #22272a;
+        --accent: #7fa3d1;
+        --accent-hover: #9bb8dd;
+        --accent-ink: #11161d;
+        --header-bg: #0c1a2d;
+        --header-text: #e3e7ec;
+        --header-muted: #8496ad;
+        --danger: #e8958c;
+        --danger-bg: #33201e;
+        --focus: #7fa3d1;
+        --backdrop: rgba(0, 0, 0, 0.6);
+
+        --shelf: #4a3f34;
+        --shelf-edge: #2f2822;
+
+        --spine-1: #2a6b58;
+        --spine-2: #84363f;
+        --spine-3: #36588a;
+        --spine-4: #9c6c27;
+        --spine-5: #555b62;
+        --spine-6: #6b4a7d;
     }
 }
 
@@ -69,19 +93,20 @@
 body {
     margin: 0;
     min-height: 100vh;
-    background: var(--color-bg);
-    color: var(--color-text);
-    font-family: var(--font);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
     font-size: 1rem;
     line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
 
 h1,
 h2,
 h3 {
     margin: 0;
-    font-weight: 750;
-    line-height: 1.25;
+    font-weight: 600;
+    line-height: 1.2;
 }
 
 p {
@@ -99,25 +124,37 @@ input {
     color: inherit;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="search"] {
     width: 100%;
+    min-height: 2.5rem;
     padding: var(--space-2) var(--space-3);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
+    background: var(--surface);
+    border: 1px solid var(--rule);
     border-radius: var(--radius);
 }
 
-input[type="text"]::placeholder {
-    color: var(--color-text-muted);
+input::placeholder {
+    color: var(--graphite);
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus,
+input[type="search"]:focus {
     outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px var(--color-focus);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
 }
 
 :focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--focus);
     outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0s !important;
+        animation-duration: 0s !important;
+    }
 }

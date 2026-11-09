@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getNoten, getNotenUrl, updateNoten, deleteNoten } from "../helper/api";
 import UpdateDialogue from "./UpdateDialogue";
 import UploadNoten from "./UploadNoten";
-import { DownloadIcon, TrashIcon } from "./Icons";
+import { DownloadIcon } from "./Icons";
 
 const notenFields = [
     { name: 'instrument', label: 'Instrument', type: 'text', required: true },
@@ -10,7 +10,7 @@ const notenFields = [
 
 const sortNoten = (noten) => [...noten].sort((a, b) => a.instrument.localeCompare(b.instrument, 'de'));
 
-// Abschnitt „Noten“ der Song-Detailseite: Liste, Upload, Bearbeiten, Download, Löschen
+// Abschnitt „Noten“ der Song-Detailseite: ein PDF pro Instrument
 export default function SongNoten({ song_id }) {
     const [noten, setNoten] = useState([]);
     const [error, setError] = useState(null);
@@ -33,82 +33,68 @@ export default function SongNoten({ song_id }) {
     };
 
     const handleUpdateNoten = async (noten_id, values) => {
-        try {
-            const updated = await updateNoten(noten_id, values);
+        const updated = await updateNoten(noten_id, values);
 
-            setNoten(prev => sortNoten(prev.map(n => n.noten_id === noten_id ? updated : n)));
-            setError(null);
-        } catch (err) {
-            setError('Noten konnten nicht aktualisiert werden.');
-            throw err; // Dialog bleibt bei Fehler offen
-        }
+        setNoten(prev => sortNoten(prev.map(n => n.noten_id === noten_id ? updated : n)));
     };
 
     const handleDeleteNoten = async (noten_id) => {
-        try {
-            const answer = await deleteNoten(noten_id);
+        await deleteNoten(noten_id);
 
-            if (answer) {
-                setNoten(prev => prev.filter(n => n.noten_id !== noten_id));
-                setError(null);
-            }
-        } catch (err) {
-            setError('Noten konnten nicht gelöscht werden.');
-        }
+        setNoten(prev => prev.filter(n => n.noten_id !== noten_id));
     };
 
     return (
         <section className="detail__section">
-            <div className="detail__section-header">
-                <h2 className="section-title">Noten</h2>
+            <div className="section-head">
+                <h2 className="section-title">
+                    Noten {noten.length > 0 && <span className="section-count">{noten.length}</span>}
+                </h2>
                 <UploadNoten song_id={song_id} onUploaded={handleUploaded} />
             </div>
             {error && <p className="alert" role="alert">{error}</p>}
             {noten.length > 0 ? (
-                <ul className="item-list">
+                <ul className="noten">
                     {noten.map(n => (
-                        <li key={n.noten_id} className="item">
+                        <li key={n.noten_id} className="noten__zeile">
                             <a
                                 href={getNotenUrl(n.noten_id)}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="item__link"
+                                className="noten__link"
+                                title={`Noten für ${n.instrument} öffnen`}
                             >
-                                <div className="item__info">
-                                    <span className="item__title">{n.instrument}</span>
-                                    <span className="item__subtitle">PDF öffnen</span>
-                                </div>
+                                <span className="noten__blatt" aria-hidden="true" />
+                                <span className="noten__instrument">{n.instrument}</span>
                             </a>
-                            <div className="item__actions">
-                                <UpdateDialogue
-                                    fields={notenFields}
-                                    initialValues={{ instrument: n.instrument }}
-                                    onSave={(values) => handleUpdateNoten(n.noten_id, values)}
-                                    label={`Instrument „${n.instrument}“ bearbeiten`}
-                                />
+                            <div className="noten__aktionen">
                                 <a
                                     href={getNotenUrl(n.noten_id, true)}
-                                    className="btn btn--secondary btn--icon"
+                                    className="btn btn--ghost btn--icon"
                                     aria-label={`Noten für ${n.instrument} herunterladen`}
                                     title="Herunterladen"
                                 >
                                     <DownloadIcon />
                                 </a>
-                                <button
-                                    type="button"
-                                    className="btn btn--danger btn--icon"
-                                    onClick={() => handleDeleteNoten(n.noten_id)}
-                                    aria-label={`Noten für ${n.instrument} löschen`}
-                                    title="Noten löschen"
-                                >
-                                    <TrashIcon />
-                                </button>
+                                <UpdateDialogue
+                                    fields={notenFields}
+                                    initialValues={{ instrument: n.instrument }}
+                                    onSave={(values) => handleUpdateNoten(n.noten_id, values)}
+                                    title="Noten bearbeiten"
+                                    trigger="icon"
+                                    label={`Noten für ${n.instrument} bearbeiten`}
+                                    onDelete={() => handleDeleteNoten(n.noten_id)}
+                                    deleteText={{
+                                        button: 'Noten löschen',
+                                        confirm: `Das PDF für ${n.instrument} wird endgültig gelöscht.`,
+                                    }}
+                                />
                             </div>
                         </li>
                     ))}
                 </ul>
             ) : (
-                <p className="detail__empty">Für diesen Song sind noch keine Noten hochgeladen.</p>
+                <p className="leer">Noch keine Noten. Lade ein PDF pro Instrument hoch.</p>
             )}
         </section>
     );

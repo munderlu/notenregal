@@ -1,35 +1,31 @@
 import { useContext } from "react";
 import { AppContext } from "./AppContext";
 import { addSong } from "../helper/api";
+import UpdateDialogue from "./UpdateDialogue";
+import { PlusIcon } from "./Icons";
+import { songFields } from "./SongList";
 
+// „Neuer Song“-Button mit Dialog. Ein Suchbegriff wird als Titel vorausgefüllt.
+export default function AddSong({ initialTitle = '', onCreated }) {
+    const { setSongs } = useContext(AppContext);
 
-export default function AddSong() {
-    const { setSongs, setError } = useContext(AppContext);
+    const handleAdd = async ({ title, composer }) => {
+        const neuerSong = await addSong({ title: title.trim(), composer: composer?.trim() || undefined });
 
-    const handleAddSong = async (e) => {
-        e.preventDefault();
-        const form = e.target;
-        const [title, composer] = [form.elements.title.value, form.elements.composer.value];
+        setSongs(prev => [...prev, neuerSong]);
+        onCreated?.(neuerSong);
+    };
 
-        try {
-            const addedSong = await addSong({ title, composer });
-
-            setSongs(prev => [...prev, addedSong]);
-            setError(null);
-            form.reset();
-        } catch (err) {
-            setError('Error adding song.');
-        }
-    }
     return (
-        <section className="AddSong card">
-            <h2 className="card__title">Song hinzufügen</h2>
-            <form className="add-form" onSubmit={handleAddSong}>
-                <input type="text" name="title" placeholder="Song Titel" required />
-                <input type="text" name="composer" placeholder="Komponist (optional)" />
-                <button type="submit" className="btn btn--primary">Hinzufügen</button>
-            </form>
-
-        </section>
+        <UpdateDialogue
+            fields={songFields}
+            initialValues={{ title: initialTitle, composer: '' }}
+            onSave={handleAdd}
+            title="Neuer Song"
+            submitLabel="Song anlegen"
+            trigger="primary"
+            triggerLabel="Neuer Song"
+            triggerIcon={PlusIcon}
+        />
     );
-};
+}

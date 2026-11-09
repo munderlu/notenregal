@@ -1,34 +1,31 @@
 import { useContext } from "react";
 import { AppContext } from "./AppContext";
 import { addSammlung } from "../helper/api";
+import UpdateDialogue from "./UpdateDialogue";
+import { PlusIcon } from "./Icons";
+import { sammlungFields } from "./SammlungenList";
 
+// „Neue Sammlung“-Button mit Dialog. Ein Suchbegriff wird als Name vorausgefüllt.
+export default function AddSammlung({ initialName = '', onCreated }) {
+    const { setSammlungen } = useContext(AppContext);
 
-export default function AddSammlung() {
-    const { setSammlungen, setError } = useContext(AppContext);
+    const handleAdd = async ({ name }) => {
+        const neueSammlung = await addSammlung({ name: name.trim() });
 
-    const handleAddSammlung = async (e) => {
-        e.preventDefault();
-        const form = e.target;
-        const name = form.elements.name.value;
+        setSammlungen(prev => [...prev, neueSammlung]);
+        onCreated?.(neueSammlung);
+    };
 
-        try {
-            const newSammlung = await addSammlung({ name });
-
-            setSammlungen(prev => [...prev, newSammlung]);
-            setError(null);
-            form.reset();
-        } catch (err) {
-            setError('Error adding Sammlung');
-        }
-    }
     return (
-        <section className="AddSammlung card">
-            <h2 className="card__title">Sammlung hinzufügen</h2>
-            <form className="add-form" onSubmit={handleAddSammlung}>
-                <input type="text" name="name" placeholder="Name der Sammlung" required />
-                <button type="submit" className="btn btn--primary">Hinzufügen</button>
-            </form>
-
-        </section>
+        <UpdateDialogue
+            fields={sammlungFields}
+            initialValues={{ name: initialName }}
+            onSave={handleAdd}
+            title="Neue Sammlung"
+            submitLabel="Sammlung anlegen"
+            trigger="primary"
+            triggerLabel="Neue Sammlung"
+            triggerIcon={PlusIcon}
+        />
     );
-};
+}

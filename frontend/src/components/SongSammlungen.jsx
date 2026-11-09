@@ -2,11 +2,12 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AppContext } from "./AppContext";
 import { addSammlung, addSongToSammlung, deleteSongFromSammlung } from "../helper/api";
+import { einbandFarbe } from "../helper/einband";
 import UpdateZuordnung from "./UpdateZuordnung";
 
 const sammlungTexts = {
-    button: 'Sammlungen ändern',
-    title: 'Sammlungen bearbeiten',
+    button: 'Zuordnen',
+    title: 'Sammlungen für diesen Song',
     placeholder: 'Sammlung suchen oder neu anlegen',
     create: (name) => `„${name}“ als neue Sammlung anlegen`,
     notFound: 'Keine Sammlung gefunden.',
@@ -35,8 +36,8 @@ export default function SongSammlungen({ song, onChanged }) {
 
     return (
         <section className="detail__section">
-            <div className="detail__section-header">
-                <h2 className="section-title">Sammlungen</h2>
+            <div className="section-head">
+                <h2 className="section-title">Steht in</h2>
                 <UpdateZuordnung
                     items={sammlungen.map(s => ({ id: s.sammlung_id, label: s.name }))}
                     initialIds={song.sammlungen.map(s => s.sammlung_id)}
@@ -49,14 +50,18 @@ export default function SongSammlungen({ song, onChanged }) {
                 <ul className="chip-list">
                     {song.sammlungen.map(sammlung => (
                         <li key={sammlung.sammlung_id}>
-                            <Link to={`/sammlungen/${sammlung.sammlung_id}`} className="chip">
+                            <Link
+                                to={`/sammlungen/${sammlung.sammlung_id}`}
+                                className="chip"
+                                style={{ '--einband': einbandFarbe(sammlung.sammlung_id) }}
+                            >
                                 {sammlung.name}
                             </Link>
                         </li>
                     ))}
                 </ul>
             ) : (
-                <p className="detail__empty">Dieser Song ist noch in keiner Sammlung.</p>
+                <p className="leer">Dieser Song steht noch in keiner Sammlung.</p>
             )}
         </section>
     );

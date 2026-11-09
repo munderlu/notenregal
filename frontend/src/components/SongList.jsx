@@ -1,8 +1,3 @@
-import { useContext, useState } from 'react';
-import { AppContext } from './AppContext';
-import UpdateDialogue from './UpdateDialogue';
-import { TrashIcon } from './Icons';
-import { updateSong, deleteSong } from '../helper/api';
 import { Link } from 'react-router-dom';
 
 export const songFields = [
@@ -10,93 +5,55 @@ export const songFields = [
     { name: 'composer', label: 'Komponist', type: 'text', required: false },
 ];
 
-export default function SongList() {
-    const { songs, setSongs, error, setError } = useContext(AppContext);
-    const [searchTerm, setSearchTerm] = useState('');
+// Songs nach Titel oder Komponist filtern und alphabetisch sortieren
+export function filterSongs(songs, searchTerm) {
+    const search = searchTerm.trim().toLowerCase();
 
-    const filteredSongs = songs.filter((song) => {
-        const titleMatch = song.title.toLowerCase().includes(searchTerm.toLowerCase());
-        const composerMatch = song.composer && song.composer.toLowerCase().includes(searchTerm.toLowerCase());
-        return titleMatch || composerMatch;
-    }).sort(
-        (a, b) => a.title.localeCompare(b.title, 'de')
-    );
+    return songs
+        .filter(song =>
+            song.title.toLowerCase().includes(search) ||
+            song.composer?.toLowerCase().includes(search)
+        )
+        .sort((a, b) => a.title.localeCompare(b.title, 'de'));
+}
 
-    const handleUpdateSong = async (song_id, values) => {
-        try {
-            const updatedSong = await updateSong(song_id, values);
+// Anfangsbuchstabe für das Register: Umlaute zum Grundbuchstaben, Ziffern/Zeichen zu „#“
+function registerBuchstabe(title) {
+    const erster = title.trim().charAt(0).normalize('NFD').charAt(0).toUpperCase();
+    return /[A-Z]/.test(erster) ? erster : '#';
+}
 
-            setSongs(prev => prev.map(
-                song => song.song_id === song_id ? updatedSong : song
-            ));
-
-            setError(null);
-        } catch (err) {
-            setError('Error updating Song');
-        }
-    }
-
-    const handleDeleteSong = async (song_id) => {
-        try {
-            const answer = await deleteSong(song_id);
-
-            if (answer) {
-                setSongs(prev => prev.filter(
-                    song => song.song_id !== song_id
-                ));
-            }
-        } catch (err) {
-            setError('Error deleting Song');
+// Alphabetisches Register: Songs nach Anfangsbuchstaben gruppiert.
+// Erwartet bereits sortierte Songs.
+export default function SongList({ songs }) {
+    const gruppen = [];
+    for (const song of songs) {
+        const buchstabe = registerBuchstabe(song.title);
+        const letzte = gruppen.at(-1);
+        if (letzte?.buchstabe === buchstabe) {
+            letzte.songs.push(song);
+        } else {
+            gruppen.push({ buchstabe, songs: [song] });
         }
     }
 
     return (
-        <section className="SongList">
-            <h2 className="section-title">Alle Songs</h2>
-            {error && <p className="alert" role="alert">{error}</p>}
-            <div className="search">
-                <input
-                    type="text"
-                    placeholder="Suche nach Songtitel oder Komponist"
-                    onChange={(e) => {
-                        setSearchTerm(e.target.value);
-                    }}
-                    className="search__input"
-                    value={searchTerm}
-                />
-                {searchTerm && (
-                    <button className="search__clear" onClick={() => setSearchTerm("")} aria-label="Suche löschen">×</button>
-                )}
-            </div>
-            <ul className="item-list">
-                {filteredSongs.map((song) => (
-                    <li key={song.song_id} className="item">
-                        <Link to={`/songs/${song.song_id}`} className="item__link">
-                            <div className="item__info">
-                                <span className="item__title">{song.title}</span>
-                                {song.composer ? <span className="item__subtitle">{song.composer}</span> : null}
-                            </div>
-                        </Link>
-                        <div className="item__actions">
-                            <UpdateDialogue
-                                fields={songFields}
-                                initialValues={song}
-                                onSave={(values) => handleUpdateSong(song.song_id, values)}
-                                label={`„${song.title}“ bearbeiten`}
-                            />
-                            <button
-                                type="button"
-                                className="btn btn--danger btn--icon"
-                                onClick={() => handleDeleteSong(song.song_id)}
-                                aria-label={`„${song.title}“ löschen`}
-                                title={`„${song.title}“ löschen`}
-                            >
-                                <TrashIcon />
-                            </button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </section>
+        <div className="register">
+            {gruppen.map(gruppe => (
+                <section key={gruppe.buchstabe} className="register__gruppe" aria-label={`Songs mit ${gruppe.buchstabe}`}>
+                    <h2 className="register__buchstabe" aria-hidden="true">{gruppe.buchstabe}</h2>
+                    <ul className="register__liste">
+                        {gruppe.songs.map(song => (
+                            <li key={song.song_id}>
+                                <Link to={`/songs/${song.song_id}`} className="register__eintrag">
+                                    <span className="register__titel">{song.title}</span>
+                                    {song.composer && <span className="register__komponist">{song.composer}</span>}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            ))}
+        </div>
     );
-};
+}

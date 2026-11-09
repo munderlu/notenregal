@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, useId } from 'react';
+import SearchField from './SearchField';
+import { PlusIcon } from './Icons';
 
 /*
  * Allgemeiner Dialog, um Verknüpfungen per Checkbox zu bearbeiten
@@ -102,26 +104,21 @@ export default function UpdateZuordnung({ items, initialIds, onCreate, onSave, t
                 <h2 className="dialog__title">{texts.title}</h2>
                 {error && <p className="alert" role="alert">{error}</p>}
 
-                <div className="search">
-                    <input
-                        type="text"
-                        className="search__input"
-                        placeholder={texts.placeholder}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                handleCreate();
-                            }
-                        }}
-                    />
-                    {searchTerm && (
-                        <button type="button" className="search__clear" onClick={() => setSearchTerm('')} aria-label="Suche löschen">×</button>
-                    )}
-                </div>
+                <SearchField
+                    value={searchTerm}
+                    onChange={setSearchTerm}
+                    placeholder={texts.placeholder}
+                    label={texts.placeholder}
+                    autoFocus
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleCreate();
+                        }
+                    }}
+                />
 
-                <form id={formId} className="dialog__form" onSubmit={handleSubmit}>
+                <form id={formId} className="dialog__form dialog__form--liste" onSubmit={handleSubmit}>
                     <ul className="checkbox-list">
                         {filteredItems.map(item => (
                             <li key={item.id} className="checkbox-item">
@@ -146,7 +143,8 @@ export default function UpdateZuordnung({ items, initialIds, onCreate, onSave, t
                                     onClick={handleCreate}
                                     disabled={isCreating}
                                 >
-                                    + {texts.create(trimmedSearch)}
+                                    <PlusIcon size={16} />
+                                    <span>{texts.create(trimmedSearch)}</span>
                                 </button>
                             </li>
                         )}
