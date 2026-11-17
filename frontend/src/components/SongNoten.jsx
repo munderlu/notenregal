@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { getNoten, getNotenUrl, updateNoten, deleteNoten } from "../helper/api";
 import UpdateDialogue from "./UpdateDialogue";
 import UploadNoten from "./UploadNoten";
@@ -57,16 +58,14 @@ export default function SongNoten({ song_id }) {
                 <ul className="noten">
                     {noten.map(n => (
                         <li key={n.noten_id} className="noten__zeile">
-                            <a
-                                href={getNotenUrl(n.noten_id)}
-                                target="_blank"
-                                rel="noreferrer"
+                            <Link
+                                to={`/songs/${song_id}/noten/${n.noten_id}`}
                                 className="noten__link"
-                                title={`Noten für ${n.instrument} öffnen`}
+                                title={`Noten für ${n.instrument} ansehen`}
                             >
                                 <span className="noten__blatt" aria-hidden="true" />
                                 <span className="noten__instrument">{n.instrument}</span>
-                            </a>
+                            </Link>
                             <div className="noten__aktionen">
                                 <a
                                     href={getNotenUrl(n.noten_id, true)}

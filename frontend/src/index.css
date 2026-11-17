@@ -22,6 +22,7 @@
     --danger-bg: #f7e9e7;
     --focus: #1f3a5f;
     --backdrop: rgba(20, 24, 26, 0.45);
+    --viewer-bg: #50555a;
 
     --shelf: #6b5a48;
     --shelf-edge: #4e4135;
@@ -70,6 +71,7 @@
         --danger-bg: #33201e;
         --focus: #7fa3d1;
         --backdrop: rgba(0, 0, 0, 0.6);
+    --viewer-bg: #0d0f10;
 
         --shelf: #4a3f34;
         --shelf-edge: #2f2822;

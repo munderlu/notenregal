@@ -97,3 +97,120 @@ export function SearchIcon(props) {
         </Icon>
     );
 }
+
+export function ChevronRightIcon(props) {
+    return (
+        <Icon {...props}>
+            <path d="M9 18l6-6-6-6" />
+        </Icon>
+    );
+}
+
+export function ZoomInIcon(props) {
+    return (
+        <Icon {...props}>
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-3.5-3.5" />
+            <path d="M11 8v6" />
+            <path d="M8 11h6" />
+        </Icon>
+    );
+}
+
+export function ZoomOutIcon(props) {
+    return (
+        <Icon {...props}>
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-3.5-3.5" />
+            <path d="M8 11h6" />
+        </Icon>
+    );
+}
+
+// Ganze Seite einpassen: Blatt in einem Rahmen aus Ecken
+export function FitPageIcon(props) {
+    return (
+        <Icon {...props}>
+            <path d="M4 8V5a1 1 0 0 1 1-1h3" />
+            <path d="M16 4h3a1 1 0 0 1 1 1v3" />
+            <path d="M20 16v3a1 1 0 0 1-1 1h-3" />
+            <path d="M8 20H5a1 1 0 0 1-1-1v-3" />
+            <rect x="9" y="7.5" width="6" height="9" rx="0.5" />
+        </Icon>
+    );
+}
+
+// An Breite anpassen: Pfeile nach links und rechts
+export function FitWidthIcon(props) {
+    return (
+        <Icon {...props}>
+            <path d="M3 12h18" />
+            <path d="M7 8l-4 4 4 4" />
+            <path d="M17 8l4 4-4 4" />
+        </Icon>
+    );
+}
+
+// Ansicht „Scrollen“: Seiten untereinander
+export function ScrollIcon(props) {
+    return (
+        <Icon {...props}>
+            <rect x="6" y="2" width="12" height="9" rx="1" />
+            <rect x="6" y="13" width="12" height="9" rx="1" />
+        </Icon>
+    );
+}
+
+// Ansicht „Einzelseite“
+export function EinzelseiteIcon(props) {
+    return (
+        <Icon {...props}>
+            <rect x="5" y="3" width="14" height="18" rx="1" />
+            <path d="M8.5 8h7" />
+            <path d="M8.5 12h7" />
+            <path d="M8.5 16h7" />
+        </Icon>
+    );
+}
+
+// Ansicht „Doppelseite“
+export function DoppelseiteIcon(props) {
+    return (
+        <Icon {...props}>
+            <rect x="2" y="4" width="9" height="16" rx="1" />
+            <rect x="13" y="4" width="9" height="16" rx="1" />
+        </Icon>
+    );
+}
+
+// Ansicht „Halbe Seite“: Blatt mit gestrichelter Trennlinie
+export function HalbseiteIcon(props) {
+    return (
+        <Icon {...props}>
+            <rect x="5" y="3" width="14" height="18" rx="1" />
+            <path d="M3 12h18" strokeDasharray="2.5 2" />
+        </Icon>
+    );
+}
+
+export function VollbildIcon(props) {
+    return (
+        <Icon {...props}>
+            <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+            <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+            <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+            <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+        </Icon>
+    );
+}
+
+export function VollbildVerlassenIcon(props) {
+    return (
+        <Icon {...props}>
+            <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+            <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+            <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+            <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+        </Icon>
+    );
+}
